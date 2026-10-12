@@ -24,12 +24,12 @@ class Tournament < ApplicationRecord
 
   scope :ordered, -> { in_order_of(:status, %w[ in_progress registration finished ]).order(starts_on: :desc, created_at: :desc) }
 
-  def self.pairing_system_label(system)
-    system.to_s == "round_robin" ? "Round robin" : "Swiss"
+  def pairing_system_label
+    self.class.human_enum_name(:pairing_system, pairing_system)
   end
 
-  def pairing_system_label
-    self.class.pairing_system_label(pairing_system)
+  def status_label
+    self.class.human_enum_name(:status, status)
   end
 
   # Swiss pairing-allocated byes score like a win; in a round robin the odd player just rests.
@@ -63,11 +63,11 @@ class Tournament < ApplicationRecord
 
   def start
     if !registration?
-      errors.add(:base, "Tournament has already started")
+      errors.add(:base, :already_started)
     elsif participations.count < 2
-      errors.add(:base, "At least 2 members are needed to start the tournament")
+      errors.add(:base, :not_enough_members)
     elsif swiss? && rounds_count > max_swiss_rounds
-      errors.add(:rounds_count, "is too high for #{participations.count} members (maximum is #{max_swiss_rounds})")
+      errors.add(:rounds_count, :too_many_rounds, members: participations.count, maximum: max_swiss_rounds)
     end
     return false if errors.any?
 
@@ -80,7 +80,7 @@ class Tournament < ApplicationRecord
 
   def pair_next_round
     unless can_pair_next_round?
-      errors.add(:base, "The next round can be paired only when every result of the current round is entered")
+      errors.add(:base, :round_incomplete)
       return false
     end
 
@@ -91,7 +91,7 @@ class Tournament < ApplicationRecord
 
   def finish
     unless can_finish?
-      errors.add(:base, "The tournament can be finished only when every result is entered")
+      errors.add(:base, :results_missing)
       return false
     end
 
@@ -101,7 +101,7 @@ class Tournament < ApplicationRecord
   # Throws away all pairings and goes back to registration. Allowed only before any game is played.
   def reset
     unless can_reset?
-      errors.add(:base, "Pairings can be reset only before any result is entered")
+      errors.add(:base, :results_entered)
       return false
     end
 
@@ -114,7 +114,7 @@ class Tournament < ApplicationRecord
   def remove_last_round
     round = current_round
     unless swiss? && in_progress? && round
-      errors.add(:base, "Only the latest round of a running Swiss tournament can be deleted")
+      errors.add(:base, :cannot_delete_round)
       return false
     end
 
@@ -138,13 +138,13 @@ class Tournament < ApplicationRecord
 
     def pairing_system_unchanged_after_start
       if pairing_system_changed? && !registration?
-        errors.add(:pairing_system, "can't be changed after the tournament has started")
+        errors.add(:pairing_system, :locked)
       end
     end
 
     def rounds_count_covers_played_rounds
       if swiss? && rounds_count.present? && rounds_count < rounds.size
-        errors.add(:rounds_count, "can't be less than the #{rounds.size} rounds already paired")
+        errors.add(:rounds_count, :less_than_paired, count: rounds.size)
       end
     end
 end

@@ -26,26 +26,26 @@ class PlayersController < ApplicationController
     if @player.save
       if @tournament&.members_editable?
         @tournament.participations.create!(player: @player)
-        redirect_to @tournament, notice: "#{@player.name} was added and joined the tournament."
+        redirect_to @tournament, notice: t(".joined", name: @player.name)
       else
-        redirect_to @player, notice: "#{@player.name} was added."
+        redirect_to @player, notice: t(".created", name: @player.name)
       end
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
   def update
     if @player.update(player_params)
-      redirect_to @player, notice: "#{@player.name} was updated."
+      redirect_to @player, notice: t(".updated", name: @player.name)
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 
   def destroy
     if @player.destroy
-      redirect_to players_path, notice: "#{@player.name} was removed.", status: :see_other
+      redirect_to players_path, notice: t(".destroyed", name: @player.name), status: :see_other
     else
       redirect_to @player, alert: @player.errors.full_messages.to_sentence, status: :see_other
     end

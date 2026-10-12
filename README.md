@@ -5,6 +5,9 @@ add its members, pair rounds with board numbers, enter results, and show live st
 
 Rails 8.1 · PostgreSQL · Hotwire (Turbo + Stimulus, importmap). No build step and no login.
 
+The interface is in **Russian by default**. The RU / EN switch in the top bar changes the language, and the
+choice is kept in a cookie.
+
 ## Setup
 
 ```sh
@@ -19,7 +22,8 @@ bin/dev                                     # http://localhost:3000
 The app connects with libpq defaults, so `PGHOST`, `PGPORT`, `PGUSER` and `PGPASSWORD` work as
 usual (e.g. `PGPORT=5433` for the PostgreSQL 14 cluster).
 
-Tests: `bin/rails test`. Lint: `bin/rubocop`, `bin/brakeman`.
+Tests: `bin/rspec` (RSpec; first run `bin/rails db:test:prepare`). Lint: `bin/rubocop`, `bin/brakeman`.
+The whole CI pipeline runs locally with `bin/ci`.
 
 ## How a tournament runs
 
@@ -62,6 +66,13 @@ then wins. Fully tied players share a rank.
   tournament runs and join the next round with 0 points.
 - **Undo start** (in the ••• menu) removes all pairings while no result has been entered yet.
 - Players or members who already have games can't be deleted, so history stays consistent.
+
+## Translations
+
+All interface text is in `config/locales/ru.yml` and `config/locales/en.yml`, and both files must have the same
+keys. Russian validation messages, month names and plural rules come from the `rails-i18n` gem. In development
+and test a missing translation raises an error, and `spec/requests/locales_spec.rb` renders every screen in both
+languages, so a forgotten key fails the specs.
 
 ## Data model
 

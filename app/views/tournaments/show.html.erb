@@ -3,16 +3,16 @@
 
 <% if @tournament.in_progress? && (round = @tournament.current_round) %>
   <div class="callout">
-    <span>Round <%= round.number %> is on. </span>
-    <%= link_to "See who plays whom →", tournament_round_path(@tournament, round), class: "strong-link" %>
+    <span><%= t(".round_on", number: round.number) %></span>
+    <%= link_to t(".see_pairings"), tournament_round_path(@tournament, round), class: "strong-link" %>
   </div>
 <% end %>
 
 <div class="<%= class_names("layout", "layout--split": @tournament.members_editable?) %>">
   <section class="card card--flush" aria-labelledby="members-title">
     <div class="card__head">
-      <h2 id="members-title">Members</h2>
-      <span class="muted"><%= pluralize(@participations.size, "player") %>, by rating</span>
+      <h2 id="members-title"><%= t(".members") %></h2>
+      <span class="muted"><%= t(".members_count", count: @participations.size) %></span>
     </div>
 
     <% if @participations.any? %>
@@ -20,9 +20,9 @@
         <thead>
           <tr>
             <th class="num">#</th>
-            <th>Player</th>
+            <th><%= t(".player") %></th>
             <th class="num">FIDE</th>
-            <% if @tournament.members_editable? %><th class="actions"><span class="visually-hidden">Actions</span></th><% end %>
+            <% if @tournament.members_editable? %><th class="actions"><span class="visually-hidden"><%= t("shared.actions") %></span></th><% end %>
           </tr>
         </thead>
         <tbody>
@@ -35,8 +35,8 @@
               <% if @tournament.members_editable? %>
                 <td class="actions">
                   <% unless @players_with_games.include?(player.id) %>
-                    <%= button_to "Remove", tournament_participation_path(@tournament, participation), method: :delete,
-                          class: "btn btn--small btn--ghost", aria: { label: "Remove #{player.name}" } %>
+                    <%= button_to t(".remove"), tournament_participation_path(@tournament, participation), method: :delete,
+                          class: "btn btn--small btn--ghost", aria: { label: t(".remove_player", name: player.name) } %>
                   <% end %>
                 </td>
               <% end %>
@@ -45,22 +45,22 @@
         </tbody>
       </table>
     <% else %>
-      <div class="empty empty--inset">No members yet. Add players from the club roster.</div>
+      <div class="empty empty--inset"><%= t(".no_members") %></div>
     <% end %>
   </section>
 
   <% if @tournament.members_editable? %>
-    <section class="card" aria-labelledby="add-title" data-controller="filter selection">
+    <section class="card" aria-labelledby="add-title" data-controller="filter selection" data-selection-label-value="<%= t(".add_selected") %>">
       <div class="card__head card__head--plain">
-        <h2 id="add-title">Add players</h2>
+        <h2 id="add-title"><%= t(".add_players") %></h2>
       </div>
       <% if @tournament.in_progress? %>
-        <p class="hint">Late entries join from the next round with 0 points.</p>
+        <p class="hint"><%= t(".late_entries") %></p>
       <% end %>
 
       <% if @available_players.any? %>
-        <input type="search" class="picker__filter" placeholder="Filter by name or nickname…" autocomplete="off"
-               aria-label="Filter players" data-action="input->filter#apply">
+        <input type="search" class="picker__filter" placeholder="<%= t(".filter_placeholder") %>" autocomplete="off"
+               aria-label="<%= t(".filter_label") %>" data-action="input->filter#apply">
 
         <%= form_with url: tournament_participations_path(@tournament), class: "picker" do |form| %>
           <ul class="picker__list">
@@ -75,19 +75,19 @@
               </li>
             <% end %>
           </ul>
-          <p class="picker__none muted" data-filter-target="empty" hidden>Nobody matches.</p>
+          <p class="picker__none muted" data-filter-target="empty" hidden><%= t(".nobody_matches") %></p>
 
           <div class="picker__footer">
-            <button type="button" class="btn btn--small btn--ghost" data-action="selection#toggleVisible">Select all shown</button>
-            <%= form.button "Add selected", class: "btn btn--primary", disabled: true, data: { selection_target: "submit" } %>
+            <button type="button" class="btn btn--small btn--ghost" data-action="selection#toggleVisible"><%= t(".select_shown") %></button>
+            <%= form.button t(".add_selected"), class: "btn btn--primary", disabled: true, data: { selection_target: "submit" } %>
           </div>
         <% end %>
       <% else %>
-        <p class="muted">Everyone in the roster is already a member.</p>
+        <p class="muted"><%= t(".everyone_added") %></p>
       <% end %>
 
       <p class="picker__new">
-        Not in the roster? <%= link_to "Register a new player", new_player_path(tournament_id: @tournament.id), class: "strong-link" %>
+        <%= t(".not_in_roster") %> <%= link_to t(".register_player"), new_player_path(tournament_id: @tournament.id), class: "strong-link" %>
       </p>
     </section>
   <% end %>

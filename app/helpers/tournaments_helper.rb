@@ -9,12 +9,12 @@ module TournamentsHelper
 
   def rounds_summary(tournament)
     if tournament.in_progress? && tournament.current_round
-      "Round #{tournament.current_round.number} of #{tournament.rounds_count}"
+      t("tournaments.summary.round_of", number: tournament.current_round.number, total: tournament.rounds_count)
     elsif tournament.rounds_count
-      pluralize(tournament.rounds_count, "round")
+      t("tournaments.summary.rounds", count: tournament.rounds_count)
     elsif tournament.round_robin? && tournament.participations.size > 1
       count = tournament.participations.size
-      "#{pluralize(count.even? ? count - 1 : count, "round")} (all-play-all)"
+      t("tournaments.summary.all_play_all", rounds: t("tournaments.summary.rounds", count: count.even? ? count - 1 : count))
     end
   end
 
@@ -22,13 +22,14 @@ module TournamentsHelper
     return tag.span("", class: "cell cell--empty") if cell.nil?
 
     if cell.bye?
-      title = cell.points.positive? ? "Bye" : "Rests this round"
-      tag.span(cell.points.positive? ? "+" : "–", class: "cell cell--bye", title:)
+      bye = cell.points.positive?
+      tag.span(bye ? "+" : "–", class: "cell cell--bye", title: t(bye ? "standings_cell.bye" : "standings_cell.rested"))
     elsif cell.pending
-      tag.span("…", class: "cell cell--pending", title: "Playing #{cell.opponent.name} with #{cell.color}")
+      tag.span("…", class: "cell cell--pending", title: t("standings_cell.pending", opponent: cell.opponent.name, color: t("colors.with.#{cell.color}")))
     else
       result = { 1.0 => "win", 0.5 => "draw", 0.0 => "loss" }.fetch(cell.points.to_f)
-      tag.span(class: "cell cell--#{result}", title: "#{result.capitalize} vs #{cell.opponent.name} (#{cell.color})") do
+      title = t("standings_cell.#{result}", opponent: cell.opponent.name, color: t("colors.with.#{cell.color}"))
+      tag.span(class: "cell cell--#{result}", title:) do
         safe_join([ piece_color(cell.color), format_score(cell.points) ])
       end
     end

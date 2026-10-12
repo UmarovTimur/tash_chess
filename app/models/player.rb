@@ -10,7 +10,7 @@ class Player < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 100 }
   validates :nickname, presence: true, length: { maximum: 30 }, uniqueness: { case_sensitive: false },
-    format: { with: NICKNAME_FORMAT, message: "may contain only letters, digits, dots, dashes and underscores" }
+    format: { with: NICKNAME_FORMAT }
   validates :fide_rating, numericality: { only_integer: true, in: 1000..3000 }, allow_nil: true
 
   before_destroy :ensure_no_games_played, prepend: true
@@ -29,7 +29,7 @@ class Player < ApplicationRecord
   private
     def ensure_no_games_played
       if games.exists?
-        errors.add(:base, "#{name} has already played tournament games and can't be deleted")
+        errors.add(:base, :games_played, name:)
         throw :abort
       end
     end

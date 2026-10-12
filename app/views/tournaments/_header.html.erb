@@ -3,51 +3,51 @@
 <header class="tournament-head">
   <div class="page-head">
     <div>
-      <p class="crumbs"><%= link_to "Tournaments", tournaments_path %></p>
+      <p class="crumbs"><%= link_to t("layouts.application.tournaments"), tournaments_path %></p>
       <h1><%= tournament.name %> <%= status_badge(tournament) %></h1>
       <p class="muted"><%= tournament_summary(tournament) %></p>
     </div>
 
     <div class="toolbar">
       <% if tournament.registration? %>
-        <%= button_to "Start tournament", start_tournament_path(tournament), class: "btn btn--primary",
+        <%= button_to t(".start"), start_tournament_path(tournament), class: "btn btn--primary",
               disabled: tournament.participations.size < 2,
-              form: { data: { turbo_confirm: "Start the tournament and pair #{tournament.round_robin? ? "all rounds" : "round 1"}?" } } %>
+              form: { data: { turbo_confirm: t(tournament.round_robin? ? ".confirm_start_all" : ".confirm_start_first") } } %>
       <% end %>
       <% if tournament.can_finish? && !tournament.can_pair_next_round? %>
-        <%= button_to "Finish tournament", finish_tournament_path(tournament), class: "btn btn--primary",
-              form: { data: { turbo_confirm: "Finish the tournament? Results will be locked." } } %>
+        <%= button_to t(".finish"), finish_tournament_path(tournament), class: "btn btn--primary",
+              form: { data: { turbo_confirm: t(".confirm_finish") } } %>
       <% end %>
       <% unless tournament.finished? %>
-        <%= link_to "Edit", edit_tournament_path(tournament), class: "btn" %>
+        <%= link_to t("shared.edit"), edit_tournament_path(tournament), class: "btn" %>
       <% end %>
       <details class="menu">
-        <summary class="btn btn--ghost" aria-label="More actions">•••</summary>
+        <summary class="btn btn--ghost" aria-label="<%= t(".more_actions") %>">•••</summary>
         <div class="menu__body">
           <% if tournament.can_finish? && tournament.can_pair_next_round? %>
-            <%= button_to "Finish early", finish_tournament_path(tournament), class: "menu__item",
-                  form: { data: { turbo_confirm: "Finish now, without playing the remaining rounds?" } } %>
+            <%= button_to t(".finish_early"), finish_tournament_path(tournament), class: "menu__item",
+                  form: { data: { turbo_confirm: t(".confirm_finish_early") } } %>
           <% end %>
           <% if tournament.can_reset? %>
-            <%= button_to "Undo start (remove pairings)", reset_tournament_path(tournament), class: "menu__item",
-                  form: { data: { turbo_confirm: "Remove all pairings and reopen registration?" } } %>
+            <%= button_to t(".reset"), reset_tournament_path(tournament), class: "menu__item",
+                  form: { data: { turbo_confirm: t(".confirm_reset") } } %>
           <% end %>
-          <%= button_to "Delete tournament", tournament, method: :delete, class: "menu__item menu__item--danger",
-                form: { data: { turbo_confirm: "Delete “#{tournament.name}” with all its rounds and results?" } } %>
+          <%= button_to t(".delete"), tournament, method: :delete, class: "menu__item menu__item--danger",
+                form: { data: { turbo_confirm: t(".confirm_delete", name: tournament.name) } } %>
         </div>
       </details>
     </div>
   </div>
 
-  <nav class="tabs" aria-label="Tournament sections">
+  <nav class="tabs" aria-label="<%= t(".sections") %>">
     <%= link_to tournament_path(tournament), class: class_names("tab", "tab--active": tab == :members) do %>
-      Members <span class="tab__count"><%= tournament.participations.size %></span>
+      <%= t(".members") %> <span class="tab__count"><%= tournament.participations.size %></span>
     <% end %>
     <% if (round = tournament.current_round) %>
-      <%= link_to "Pairings", tournament_round_path(tournament, round), class: class_names("tab", "tab--active": tab == :pairings) %>
+      <%= link_to t(".pairings"), tournament_round_path(tournament, round), class: class_names("tab", "tab--active": tab == :pairings) %>
     <% else %>
-      <span class="tab tab--disabled" title="Pairings appear when the tournament starts">Pairings</span>
+      <span class="tab tab--disabled" title="<%= t(".pairings_later") %>"><%= t(".pairings") %></span>
     <% end %>
-    <%= link_to "Standings", tournament_standings_path(tournament), class: class_names("tab", "tab--active": tab == :standings) %>
+    <%= link_to t(".standings"), tournament_standings_path(tournament), class: class_names("tab", "tab--active": tab == :standings) %>
   </nav>
 </header>

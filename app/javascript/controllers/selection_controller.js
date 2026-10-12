@@ -1,8 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Keeps the submit button in sync with the checked checkboxes.
+// Keeps the submit button in sync with the checked checkboxes: disabled when none, "Label (3)" otherwise.
 export default class extends Controller {
   static targets = [ "checkbox", "submit" ]
+  static values = { label: String }
 
   connect() {
     this.update()
@@ -18,6 +19,6 @@ export default class extends Controller {
   update() {
     const count = this.checkboxTargets.filter(checkbox => checkbox.checked).length
     this.submitTarget.disabled = count === 0
-    this.submitTarget.textContent = count > 1 ? `Add ${count} players` : count === 1 ? "Add 1 player" : "Add selected"
+    this.submitTarget.textContent = count > 0 ? `${this.labelValue} (${count})` : this.labelValue
   }
 }

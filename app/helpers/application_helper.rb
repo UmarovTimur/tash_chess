@@ -1,6 +1,4 @@
 module ApplicationHelper
-  STATUS_LABELS = { "registration" => "Registration", "in_progress" => "In progress", "finished" => "Finished" }.freeze
-
   # 0 → "0", 0.5 → "½", 2.5 → "2½"; anything else (e.g. Sonneborn-Berger 3.25) as a plain number.
   def format_score(value)
     return "" if value.nil?
@@ -10,7 +8,7 @@ module ApplicationHelper
       whole, half = doubled.round.divmod(2)
       half.zero? ? whole.to_s : "#{whole unless whole.zero?}½"
     else
-      number_with_precision(value, precision: 2, strip_insignificant_zeros: true)
+      format_tiebreak(value)
     end
   end
 
@@ -19,11 +17,12 @@ module ApplicationHelper
   end
 
   def status_badge(tournament)
-    tag.span STATUS_LABELS.fetch(tournament.status), class: "badge badge--#{tournament.status.dasherize}"
+    tag.span tournament.status_label, class: "badge badge--#{tournament.status.dasherize}"
   end
 
   def piece_color(color)
-    tag.span class: "piece piece--#{color}", title: color.to_s.capitalize, aria: { label: color.to_s.capitalize }
+    label = t("colors.#{color}")
+    tag.span class: "piece piece--#{color}", title: label, aria: { label: }
   end
 
   def rating(player)

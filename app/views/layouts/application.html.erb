@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= I18n.locale %>">
   <head>
     <title><%= [ content_for(:title), "Tash Chess" ].compact.join(" · ") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -27,10 +27,20 @@
         <%= link_to root_path, class: "brand" do %>
           <span class="brand__mark" aria-hidden="true">♞</span> Tash Chess
         <% end %>
-        <nav class="nav">
-          <%= nav_link_to "Tournaments", tournaments_path, active: controller_path.start_with?("tournaments") || controller_name == "games" %>
-          <%= nav_link_to "Players", players_path, active: controller_name == "players" %>
-        </nav>
+        <div class="topbar__end">
+          <nav class="nav">
+            <%= nav_link_to t(".tournaments"), tournaments_path, active: controller_path.start_with?("tournaments") || controller_name == "games" %>
+            <%= nav_link_to t(".players"), players_path, active: controller_name == "players" %>
+          </nav>
+          <div class="locale-switch" role="group" aria-label="<%= t(".language") %>">
+            <% I18n.available_locales.each do |locale| %>
+              <%= button_to locale.to_s.upcase, locale_path, method: :patch, params: { locale: },
+                    class: class_names("locale-switch__button", "locale-switch__button--active": locale == I18n.locale),
+                    form_class: "locale-switch__form", lang: locale, title: t("locales.#{locale}"),
+                    aria: { pressed: locale == I18n.locale } %>
+            <% end %>
+          </div>
+        </div>
       </div>
     </header>
 

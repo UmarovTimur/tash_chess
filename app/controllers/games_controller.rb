@@ -6,7 +6,7 @@ class GamesController < ApplicationController
     if tournament.in_progress? && !game.bye? && game.update(result: params.expect(game: :result)[:result])
       redirect_to tournament_round_path(tournament, game.round), status: :see_other
     else
-      message = game.errors.full_messages.to_sentence.presence || "This result can't be changed."
+      message = game.errors.full_messages.to_sentence.presence || t(".locked")
       redirect_to tournament_round_path(tournament, game.round), alert: message, status: :see_other
     end
   end

@@ -1,11 +1,11 @@
-<% content_for :title, "Tournaments" %>
+<% content_for :title, t(".title") %>
 
 <div class="page-head">
   <div>
-    <h1>Tournaments</h1>
-    <p class="muted">Create an event, add members, pair rounds, enter results.</p>
+    <h1><%= t(".title") %></h1>
+    <p class="muted"><%= t(".subtitle") %></p>
   </div>
-  <%= link_to "New tournament", new_tournament_path, class: "btn btn--primary" %>
+  <%= link_to t(".new"), new_tournament_path, class: "btn btn--primary" %>
 </div>
 
 <% if @tournaments.any? %>
@@ -17,13 +17,13 @@
           <%= status_badge(tournament) %>
         </div>
         <p class="muted"><%= tournament_summary(tournament) %></p>
-        <p class="tile__meta"><%= pluralize(tournament.participations.size, "member") %></p>
+        <p class="tile__meta"><%= t(".members", count: tournament.participations.size) %></p>
       </article>
     <% end %>
   </div>
 <% else %>
   <div class="empty">
-    <p>No tournaments yet.</p>
-    <%= link_to "Create the first one", new_tournament_path, class: "btn btn--primary" %>
+    <p><%= t(".empty") %></p>
+    <%= link_to t(".create_first"), new_tournament_path, class: "btn btn--primary" %>
   </div>
 <% end %>

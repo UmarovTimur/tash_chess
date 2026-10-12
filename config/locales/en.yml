@@ -1,31 +1,300 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  locales:
+    ru: Русский
+    en: English
+
+  colors:
+    white: White
+    black: Black
+    with:
+      white: white
+      black: black
+
+  layouts:
+    application:
+      tournaments: Tournaments
+      players: Players
+      language: Language
+
+  shared:
+    actions: Actions
+    edit: Edit
+    cancel: Cancel
+    delete: Delete
+    errors:
+      title:
+        one: "1 problem to fix:"
+        other: "%{count} problems to fix:"
+
+  players:
+    index:
+      title: Players
+      count:
+        one: "1 player in the club roster"
+        other: "%{count} players in the club roster"
+      new: New player
+      search_placeholder: Search by name or nickname…
+      search_label: Search players
+      no_matches: "No players match “%{query}”."
+      empty: No players yet.
+      add_first: Add the first player
+    form:
+      nickname_hint: Must be unique. Letters, digits, dots, dashes and underscores.
+      rating_hint: Optional. Used to seed the pairings.
+    new:
+      title: New player
+      joins_tournament_html: "The player will join <strong>%{tournament}</strong> right away."
+    edit:
+      title: "Edit %{name}"
+      heading: Edit player
+    show:
+      confirm_delete: "Delete %{name}? This can't be undone."
+      tournaments: Tournaments
+      points: "%{points} pts"
+      no_tournaments: Hasn't played in any tournament yet.
+    create:
+      created: "%{name} was added."
+      joined: "%{name} was added and joined the tournament."
+    update:
+      updated: "%{name} was updated."
+    destroy:
+      destroyed: "%{name} was removed."
+
+  tournaments:
+    index:
+      title: Tournaments
+      subtitle: Create an event, add members, pair rounds, enter results.
+      new: New tournament
+      members:
+        one: "1 member"
+        other: "%{count} members"
+      empty: No tournaments yet.
+      create_first: Create the first one
+    form:
+      name_placeholder: Autumn club championship
+      optional: Optional
+      pairing_systems:
+        swiss: Players with similar scores meet each other. Good for many players and few rounds.
+        round_robin: Everybody plays everybody. All rounds are paired when the tournament starts.
+      pairing_system_locked: (can't be changed after the start)
+      rounds_hint: "Rule of thumb for Swiss: enough rounds that only one player can win all games (e.g. 5 rounds for up to 32 players)."
+    new:
+      title: New tournament
+    edit:
+      title: "Edit %{name}"
+      heading: Edit tournament
+    header:
+      start: Start tournament
+      confirm_start_all: Start the tournament and pair all rounds?
+      confirm_start_first: Start the tournament and pair round 1?
+      finish: Finish tournament
+      confirm_finish: Finish the tournament? Results will be locked.
+      more_actions: More actions
+      finish_early: Finish early
+      confirm_finish_early: Finish now, without playing the remaining rounds?
+      reset: Undo start (remove pairings)
+      confirm_reset: Remove all pairings and reopen registration?
+      delete: Delete tournament
+      confirm_delete: "Delete “%{name}” with all its rounds and results?"
+      sections: Tournament sections
+      members: Members
+      pairings: Pairings
+      pairings_later: Pairings appear when the tournament starts
+      standings: Standings
+    show:
+      round_on: "Round %{number} is on."
+      see_pairings: See who plays whom →
+      members: Members
+      members_count:
+        one: "1 player, by rating"
+        other: "%{count} players, by rating"
+      player: Player
+      remove: Remove
+      remove_player: "Remove %{name}"
+      no_members: No members yet. Add players from the club roster.
+      add_players: Add players
+      late_entries: Late entries join from the next round with 0 points.
+      filter_placeholder: Filter by name or nickname…
+      filter_label: Filter players
+      nobody_matches: Nobody matches.
+      select_shown: Select all shown
+      add_selected: Add selected
+      everyone_added: Everyone in the roster is already a member.
+      not_in_roster: Not in the roster?
+      register_player: Register a new player
+    summary:
+      round_of: "Round %{number} of %{total}"
+      rounds:
+        one: "1 round"
+        other: "%{count} rounds"
+      all_play_all: "%{rounds} (all-play-all)"
+    create:
+      created: Tournament created. Now add its members.
+    update:
+      updated: Tournament updated.
+    destroy:
+      destroyed: "Tournament “%{name}” was deleted."
+    start:
+      started: The tournament has started. Round 1 is paired.
+    finish:
+      finished: The tournament is finished. Final standings below.
+    reset:
+      reopened: Pairings were removed. The tournament is open for registration again.
+    participations:
+      locked: Members can't be changed at this stage of the tournament.
+      create:
+        added:
+          one: "1 player joined the tournament."
+          other: "%{count} players joined the tournament."
+        none_selected: Choose at least one player to add.
+      destroy:
+        removed: "%{name} left the tournament."
+    rounds:
+      show:
+        round: "Round %{number}"
+        rounds: Rounds
+        complete: All results in
+        in_play: In play
+        round_label: Round
+        not_paired: Not paired yet
+        heading: "Round %{number} pairings"
+        progress: "%{played} of %{total} results in"
+        board: Board
+        result: Result
+        no_board: No board needed
+        bye: "Bye · +%{points}"
+        rests: Rests
+        board_number: "Board %{number}"
+        result_of_board: "Result of board %{number}"
+        clear_result: Clear result
+        clear_result_of_board: "Clear result of board %{number}"
+        pair_next: "Pair round %{number}"
+        print: Print pairings
+        delete_round: "Delete round %{number}"
+        confirm_delete_round: "Delete round %{number} with its pairings and results? You can pair it again afterwards."
+      player:
+        points_before: Points before this round
+      create:
+        paired: "Round %{number} is paired."
+      destroy:
+        not_latest: Only the latest round can be deleted.
+        deleted: "Round %{number} was deleted."
+    standings:
+      show:
+        final: Final standings
+        current: Current standings
+        live: Live
+        live_hint: Updates by itself when a result is entered
+        player: Player
+        round_short: "R%{number}"
+        points: Points
+        no_members: No members yet.
+        tiebreaks_swiss: Ties are broken by Buchholz, then Sonneborn-Berger, then wins.
+        tiebreaks_round_robin: Ties are broken by Sonneborn-Berger, then wins.
+        legend_html: "In round cells: %{white} / %{black} color played, “+” bye, “–” rested, “…” in play."
+
+  games:
+    update:
+      locked: This result can't be changed.
+
+  standings_cell:
+    bye: Bye
+    rested: Rested this round
+    pending: "Playing %{opponent} with %{color}"
+    win: "Win vs %{opponent} (%{color})"
+    draw: "Draw vs %{opponent} (%{color})"
+    loss: "Loss vs %{opponent} (%{color})"
+
+  helpers:
+    submit:
+      player:
+        create: Add player
+        update: Save changes
+      tournament:
+        create: Create tournament
+        update: Save changes
+
+  activerecord:
+    models:
+      player:
+        one: Player
+        other: Players
+      tournament:
+        one: Tournament
+        other: Tournaments
+      participation:
+        one: Participation
+        other: Participations
+      round:
+        one: Round
+        other: Rounds
+      game:
+        one: Game
+        other: Games
+    attributes:
+      player:
+        name: Name
+        nickname: Nickname
+        fide_rating: FIDE rating
+      tournament:
+        name: Name
+        location: Location
+        starts_on: Date
+        pairing_system: Pairing system
+        rounds_count: Number of rounds
+        status: Status
+      participation:
+        player: Player
+        player_id: Player
+        tournament: Tournament
+      round:
+        number: Number
+        tournament: Tournament
+      game:
+        board: Board
+        result: Result
+        round: Round
+        white_player: White
+        black_player: Black
+    enums:
+      tournament:
+        status:
+          registration: Registration
+          in_progress: In progress
+          finished: Finished
+        pairing_system:
+          swiss: Swiss
+          round_robin: Round robin
+    errors:
+      models:
+        player:
+          attributes:
+            nickname:
+              invalid: may contain only letters, digits, dots, dashes and underscores
+            base:
+              games_played: "%{name} has already played tournament games and can't be deleted"
+        participation:
+          attributes:
+            player_id:
+              taken: is already a member of this tournament
+            base:
+              games_played: "%{name} already has games in this tournament and can't be removed"
+        game:
+          attributes:
+            result:
+              bye_locked: of a bye can't be changed
+              bye_not_allowed: can be a bye only for an unpaired player
+        tournament:
+          attributes:
+            pairing_system:
+              locked: can't be changed after the tournament has started
+            rounds_count:
+              less_than_paired: "can't be less than the number of rounds already paired (%{count})"
+              too_many_rounds: "is too high for %{members} members (maximum is %{maximum})"
+            base:
+              already_started: Tournament has already started
+              not_enough_members: At least 2 members are needed to start the tournament
+              round_incomplete: The next round can be paired only when every result of the current round is entered
+              results_missing: The tournament can be finished only when every result is entered
+              results_entered: Pairings can be reset only before any result is entered
+              cannot_delete_round: Only the latest round of a running Swiss tournament can be deleted

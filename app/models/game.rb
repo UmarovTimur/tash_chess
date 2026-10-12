@@ -38,9 +38,9 @@ class Game < ApplicationRecord
   private
     def bye_result_matches_pairing
       if black_player_id.nil? && !bye?
-        errors.add(:result, "of a bye can't be changed")
+        errors.add(:result, :bye_locked)
       elsif black_player_id.present? && bye?
-        errors.add(:result, "can be a bye only for an unpaired player")
+        errors.add(:result, :bye_not_allowed)
       end
     end
 end

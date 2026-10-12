@@ -436,3 +436,15 @@ input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px 
   .table tbody tr:hover { background: none; }
   .player__meta { display: inline; }
 }
+
+/* ---------- Language switch ---------- */
+.topbar__end { display: flex; align-items: center; gap: 0.75rem; }
+.locale-switch { display: inline-flex; padding: 2px; gap: 2px; border: 1px solid var(--border); border-radius: 999px; }
+.locale-switch__form { margin: 0; display: contents; }
+.locale-switch__button {
+  min-width: 34px; height: 26px; padding: 0 0.45rem; border: 0; border-radius: 999px; cursor: pointer;
+  background: transparent; color: var(--muted); font: inherit; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.03em;
+}
+.locale-switch__button:hover { color: var(--text); }
+.locale-switch__button--active { background: var(--accent-soft); color: var(--text); }
+@media (max-width: 640px) { .topbar__end { gap: 0.4rem; } .nav__link { padding: 0.4rem 0.5rem; } }

@@ -22,28 +22,28 @@ class TournamentsController < ApplicationController
     @tournament = Tournament.new(tournament_params)
 
     if @tournament.save
-      redirect_to @tournament, notice: "Tournament created. Now add its members."
+      redirect_to @tournament, notice: t(".created")
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
   def update
     if @tournament.update(tournament_params)
-      redirect_to @tournament, notice: "Tournament updated."
+      redirect_to @tournament, notice: t(".updated")
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 
   def destroy
     @tournament.destroy!
-    redirect_to tournaments_path, notice: "Tournament “#{@tournament.name}” was deleted.", status: :see_other
+    redirect_to tournaments_path, notice: t(".destroyed", name: @tournament.name), status: :see_other
   end
 
   def start
     if @tournament.start
-      redirect_to tournament_round_path(@tournament, @tournament.rounds.first), notice: "The tournament has started. Round 1 is paired."
+      redirect_to tournament_round_path(@tournament, @tournament.rounds.first), notice: t(".started")
     else
       redirect_to @tournament, alert: @tournament.errors.full_messages.to_sentence
     end
@@ -51,7 +51,7 @@ class TournamentsController < ApplicationController
 
   def finish
     if @tournament.finish
-      redirect_to tournament_standings_path(@tournament), notice: "The tournament is finished. Final standings below."
+      redirect_to tournament_standings_path(@tournament), notice: t(".finished")
     else
       redirect_back_or_to @tournament, alert: @tournament.errors.full_messages.to_sentence
     end
@@ -59,7 +59,7 @@ class TournamentsController < ApplicationController
 
   def reset
     if @tournament.reset
-      redirect_to @tournament, notice: "Pairings were removed. The tournament is open for registration again."
+      redirect_to @tournament, notice: t(".reopened")
     else
       redirect_back_or_to @tournament, alert: @tournament.errors.full_messages.to_sentence
     end

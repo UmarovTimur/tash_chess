@@ -6,9 +6,9 @@ class Tournaments::ParticipationsController < Tournaments::BaseController
 
     if players.any?
       Tournament.transaction { players.each { |player| @tournament.participations.create!(player:) } }
-      redirect_to @tournament, notice: "#{helpers.pluralize(players.size, "player")} joined the tournament."
+      redirect_to @tournament, notice: t(".added", count: players.size)
     else
-      redirect_to @tournament, alert: "Choose at least one player to add."
+      redirect_to @tournament, alert: t(".none_selected")
     end
   end
 
@@ -16,7 +16,7 @@ class Tournaments::ParticipationsController < Tournaments::BaseController
     participation = @tournament.participations.find(params[:id])
 
     if participation.destroy
-      redirect_to @tournament, notice: "#{participation.player.name} left the tournament.", status: :see_other
+      redirect_to @tournament, notice: t(".removed", name: participation.player.name), status: :see_other
     else
       redirect_to @tournament, alert: participation.errors.full_messages.to_sentence, status: :see_other
     end
@@ -25,7 +25,7 @@ class Tournaments::ParticipationsController < Tournaments::BaseController
   private
     def ensure_members_editable
       unless @tournament.members_editable?
-        redirect_to @tournament, alert: "Members can't be changed at this stage of the tournament.", status: :see_other
+        redirect_to @tournament, alert: t("tournaments.participations.locked"), status: :see_other
       end
     end
 end

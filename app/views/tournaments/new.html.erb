@@ -1,6 +1,6 @@
-<% content_for :title, "New tournament" %>
+<% content_for :title, t(".title") %>
 
 <div class="narrow">
-  <h1>New tournament</h1>
+  <h1><%= t(".title") %></h1>
   <div class="card"><%= render "form", tournament: @tournament %></div>
 </div>

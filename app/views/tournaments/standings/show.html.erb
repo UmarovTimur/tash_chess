@@ -1,11 +1,11 @@
-<% content_for :title, "Standings · #{@tournament.name}" %>
+<% content_for :title, "#{t("tournaments.header.standings")} · #{@tournament.name}" %>
 <%= render "tournaments/header", tournament: @tournament, tab: :standings %>
 
 <section class="card card--flush" aria-labelledby="standings-title">
   <div class="card__head">
-    <h2 id="standings-title"><%= @tournament.finished? ? "Final standings" : "Current standings" %></h2>
+    <h2 id="standings-title"><%= t(@tournament.finished? ? ".final" : ".current") %></h2>
     <% if @tournament.in_progress? %>
-      <span class="live" title="Updates by itself when a result is entered"><span class="live__dot"></span> Live</span>
+      <span class="live" title="<%= t(".live_hint") %>"><span class="live__dot"></span> <%= t(".live") %></span>
     <% end %>
   </div>
 
@@ -15,15 +15,12 @@
         <thead>
           <tr>
             <th class="num">#</th>
-            <th>Player</th>
+            <th><%= t(".player") %></th>
             <th class="num">FIDE</th>
             <% 1.upto(@standings.rounds_count) do |number| %>
-              <th class="round-cell" title="Round <%= number %>">R<%= number %></th>
+              <th class="round-cell" title="<%= t("tournaments.rounds.show.round", number:) %>"><%= t(".round_short", number:) %></th>
             <% end %>
-            <th class="num points-col">Points</th>
-            <% if @tournament.swiss? %><th class="num" title="Buchholz: sum of opponents' points">Buch.</th><% end %>
-            <th class="num" title="Sonneborn-Berger: points of beaten opponents plus half the points of drawn ones">S-B</th>
-            <th class="num" title="Wins / draws / losses">W / D / L</th>
+            <th class="num points-col"><%= t(".points") %></th>
           </tr>
         </thead>
         <tbody>
@@ -36,20 +33,17 @@
                 <td class="round-cell"><%= standings_cell(cell) %></td>
               <% end %>
               <td class="num points-col"><strong><%= format_score(row.points) %></strong></td>
-              <% if @tournament.swiss? %><td class="num"><%= format_score(row.buchholz) %></td><% end %>
-              <td class="num"><%= format_tiebreak(row.sonneborn_berger) %></td>
-              <td class="num muted"><%= row.wins %> / <%= row.draws %> / <%= row.losses %></td>
             </tr>
           <% end %>
         </tbody>
       </table>
     </div>
   <% else %>
-    <div class="empty empty--inset">No members yet.</div>
+    <div class="empty empty--inset"><%= t(".no_members") %></div>
   <% end %>
 </section>
 
 <p class="hint legend">
-  Ties are broken by <%= @tournament.swiss? ? "Buchholz, then Sonneborn-Berger, then wins" : "Sonneborn-Berger, then wins" %>.
-  In round cells: <%= piece_color(:white) %> / <%= piece_color(:black) %> color played, “+” bye, “–” rested, “…” in play.
+  <%= t(@tournament.swiss? ? ".tiebreaks_swiss" : ".tiebreaks_round_robin") %>
+  <%= t(".legend_html", white: piece_color(:white), black: piece_color(:black)) %>
 </p>

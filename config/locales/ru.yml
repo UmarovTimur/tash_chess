@@ -1,0 +1,322 @@
+ru:
+  locales:
+    ru: Русский
+    en: English
+
+  colors:
+    white: Белые
+    black: Чёрные
+    with:
+      white: белыми
+      black: чёрными
+
+  layouts:
+    application:
+      tournaments: Турниры
+      players: Игроки
+      language: Язык
+
+  shared:
+    actions: Действия
+    edit: Изменить
+    cancel: Отмена
+    delete: Удалить
+    errors:
+      title:
+        one: "Исправьте %{count} ошибку:"
+        few: "Исправьте %{count} ошибки:"
+        many: "Исправьте %{count} ошибок:"
+        other: "Исправьте %{count} ошибки:"
+
+  players:
+    index:
+      title: Игроки
+      count:
+        one: "%{count} игрок в клубе"
+        few: "%{count} игрока в клубе"
+        many: "%{count} игроков в клубе"
+        other: "%{count} игрока в клубе"
+      new: Новый игрок
+      search_placeholder: Поиск по имени или никнейму…
+      search_label: Поиск игроков
+      no_matches: "По запросу «%{query}» никого не найдено."
+      empty: Игроков пока нет.
+      add_first: Добавить первого игрока
+    form:
+      nickname_hint: Должен быть уникальным. Буквы, цифры, точки, дефисы и подчёркивания.
+      rating_hint: Необязательно. Используется для посева при жеребьёвке.
+    new:
+      title: Новый игрок
+      joins_tournament_html: "Игрок сразу будет добавлен в турнир <strong>%{tournament}</strong>."
+    edit:
+      title: "Редактирование: %{name}"
+      heading: Редактирование игрока
+    show:
+      confirm_delete: "Удалить игрока %{name}? Это действие нельзя отменить."
+      tournaments: Турниры
+      points: "Очки: %{points}"
+      no_tournaments: Турниров пока нет.
+    create:
+      created: "Игрок %{name} добавлен."
+      joined: "Игрок %{name} добавлен и записан в турнир."
+    update:
+      updated: "Данные игрока %{name} сохранены."
+    destroy:
+      destroyed: "Игрок %{name} удалён."
+
+  tournaments:
+    index:
+      title: Турниры
+      subtitle: Создайте турнир, добавьте участников, проводите жеребьёвку и вносите результаты.
+      new: Новый турнир
+      members:
+        one: "%{count} участник"
+        few: "%{count} участника"
+        many: "%{count} участников"
+        other: "%{count} участника"
+      empty: Турниров пока нет.
+      create_first: Создать первый турнир
+    form:
+      name_placeholder: Осенний чемпионат клуба
+      optional: Необязательно
+      pairing_systems:
+        swiss: Встречаются игроки с одинаковым числом очков. Подходит для большого числа участников и небольшого числа туров.
+        round_robin: Каждый играет с каждым. Жеребьёвка всех туров составляется при старте турнира.
+      pairing_system_locked: (нельзя изменить после старта)
+      rounds_hint: "Для швейцарской системы туров должно хватить, чтобы только один игрок мог выиграть все партии (например, 5 туров — до 32 участников)."
+    new:
+      title: Новый турнир
+    edit:
+      title: "Редактирование: %{name}"
+      heading: Редактирование турнира
+    header:
+      start: Начать турнир
+      confirm_start_all: Начать турнир и составить жеребьёвку всех туров?
+      confirm_start_first: Начать турнир и составить жеребьёвку 1-го тура?
+      finish: Завершить турнир
+      confirm_finish: Завершить турнир? Результаты будут зафиксированы.
+      more_actions: Другие действия
+      finish_early: Завершить досрочно
+      confirm_finish_early: Завершить турнир сейчас, не играя оставшиеся туры?
+      reset: Отменить старт (удалить жеребьёвку)
+      confirm_reset: Удалить всю жеребьёвку и снова открыть регистрацию?
+      delete: Удалить турнир
+      confirm_delete: "Удалить «%{name}» со всеми турами и результатами?"
+      sections: Разделы турнира
+      members: Участники
+      pairings: Жеребьёвка
+      pairings_later: Жеребьёвка появится после старта турнира
+      standings: Таблица
+    show:
+      round_on: "Идёт %{number}-й тур."
+      see_pairings: Кто с кем играет →
+      members: Участники
+      members_count:
+        one: "%{count} игрок, по рейтингу"
+        few: "%{count} игрока, по рейтингу"
+        many: "%{count} игроков, по рейтингу"
+        other: "%{count} игрока, по рейтингу"
+      player: Игрок
+      remove: Убрать
+      remove_player: "Убрать игрока %{name}"
+      no_members: Участников пока нет. Добавьте игроков из списка клуба.
+      add_players: Добавить игроков
+      late_entries: Опоздавшие вступают со следующего тура с 0 очков.
+      filter_placeholder: Фильтр по имени или никнейму…
+      filter_label: Фильтр игроков
+      nobody_matches: Никого не найдено.
+      select_shown: Выбрать показанных
+      add_selected: Добавить выбранных
+      everyone_added: Все игроки клуба уже участвуют.
+      not_in_roster: Игрока нет в списке?
+      register_player: Зарегистрировать нового игрока
+    summary:
+      round_of: "Тур %{number} из %{total}"
+      rounds:
+        one: "%{count} тур"
+        few: "%{count} тура"
+        many: "%{count} туров"
+        other: "%{count} тура"
+      all_play_all: "%{rounds} (каждый с каждым)"
+    create:
+      created: Турнир создан. Теперь добавьте участников.
+    update:
+      updated: Турнир сохранён.
+    destroy:
+      destroyed: "Турнир «%{name}» удалён."
+    start:
+      started: Турнир начался. Жеребьёвка 1-го тура готова.
+    finish:
+      finished: Турнир завершён. Итоговая таблица ниже.
+    reset:
+      reopened: Жеребьёвка удалена. Регистрация снова открыта.
+    participations:
+      locked: На этом этапе турнира состав участников менять нельзя.
+      create:
+        added:
+          one: "%{count} игрок добавлен в турнир."
+          few: "%{count} игрока добавлены в турнир."
+          many: "%{count} игроков добавлено в турнир."
+          other: "%{count} игрока добавлено в турнир."
+        none_selected: Выберите хотя бы одного игрока.
+      destroy:
+        removed: "Игрок %{name} убран из турнира."
+    rounds:
+      show:
+        round: "Тур %{number}"
+        rounds: Туры
+        complete: Все результаты внесены
+        in_play: Идёт игра
+        round_label: Тур
+        not_paired: Жеребьёвки ещё нет
+        heading: "Жеребьёвка %{number}-го тура"
+        progress: "Внесено результатов: %{played} из %{total}"
+        board: Доска
+        result: Результат
+        no_board: Доска не нужна
+        bye: "Свободен · +%{points}"
+        rests: Отдыхает
+        board_number: "Доска %{number}"
+        result_of_board: "Результат на доске %{number}"
+        clear_result: Очистить результат
+        clear_result_of_board: "Очистить результат на доске %{number}"
+        pair_next: "Жеребьёвка %{number}-го тура"
+        print: Печать жеребьёвки
+        delete_round: "Удалить %{number}-й тур"
+        confirm_delete_round: "Удалить %{number}-й тур вместе с жеребьёвкой и результатами? Потом его можно составить заново."
+      player:
+        points_before: Очки до этого тура
+      create:
+        paired: "Жеребьёвка %{number}-го тура готова."
+      destroy:
+        not_latest: Удалить можно только последний тур.
+        deleted: "%{number}-й тур удалён."
+    standings:
+      show:
+        final: Итоговая таблица
+        current: Текущая таблица
+        live: Онлайн
+        live_hint: Обновляется сама при вводе результатов
+        player: Игрок
+        round_short: "Т%{number}"
+        points: Очки
+        no_members: Участников пока нет.
+        tiebreaks_swiss: При равенстве очков места определяются по Бухгольцу, затем по коэффициенту Бергера, затем по числу побед.
+        tiebreaks_round_robin: При равенстве очков места определяются по коэффициенту Бергера, затем по числу побед.
+        legend_html: "В клетках туров: %{white} / %{black} цвет фигур, «+» свободный тур, «–» отдых, «…» партия идёт."
+
+  games:
+    update:
+      locked: Этот результат изменить нельзя.
+
+  standings_cell:
+    bye: Свободный тур
+    rested: Отдых в этом туре
+    pending: "Партия против %{opponent} (%{color}) идёт"
+    win: "Победа против %{opponent} (%{color})"
+    draw: "Ничья против %{opponent} (%{color})"
+    loss: "Поражение против %{opponent} (%{color})"
+
+  helpers:
+    submit:
+      player:
+        create: Добавить игрока
+        update: Сохранить
+      tournament:
+        create: Создать турнир
+        update: Сохранить
+
+  activerecord:
+    models:
+      player:
+        one: Игрок
+        few: Игрока
+        many: Игроков
+        other: Игрока
+      tournament:
+        one: Турнир
+        few: Турнира
+        many: Турниров
+        other: Турнира
+      participation:
+        one: Участие
+        few: Участия
+        many: Участий
+        other: Участия
+      round:
+        one: Тур
+        few: Тура
+        many: Туров
+        other: Тура
+      game:
+        one: Партия
+        few: Партии
+        many: Партий
+        other: Партии
+    attributes:
+      player:
+        name: Имя
+        nickname: Никнейм
+        fide_rating: Рейтинг FIDE
+      tournament:
+        name: Название
+        location: Место проведения
+        starts_on: Дата
+        pairing_system: Система проведения
+        rounds_count: Количество туров
+        status: Статус
+      participation:
+        player: Игрок
+        player_id: Игрок
+        tournament: Турнир
+      round:
+        number: Номер
+        tournament: Турнир
+      game:
+        board: Доска
+        result: Результат
+        round: Тур
+        white_player: Белые
+        black_player: Чёрные
+    enums:
+      tournament:
+        status:
+          registration: Регистрация
+          in_progress: Идёт
+          finished: Завершён
+        pairing_system:
+          swiss: Швейцарская система
+          round_robin: Круговая система
+    errors:
+      models:
+        player:
+          attributes:
+            nickname:
+              invalid: может содержать только буквы, цифры, точки, дефисы и подчёркивания
+            base:
+              games_played: "У игрока %{name} уже есть сыгранные партии, удалить его нельзя"
+        participation:
+          attributes:
+            player_id:
+              taken: уже участвует в этом турнире
+            base:
+              games_played: "У игрока %{name} уже есть партии в этом турнире, убрать его нельзя"
+        game:
+          attributes:
+            result:
+              bye_locked: свободного тура изменить нельзя
+              bye_not_allowed: «свободный тур» возможен только для игрока без пары
+        tournament:
+          attributes:
+            pairing_system:
+              locked: не может быть изменена после старта турнира
+            rounds_count:
+              less_than_paired: "не может быть меньше числа уже составленных туров (%{count})"
+              too_many_rounds: "слишком велико для %{members} участников (максимум %{maximum})"
+            base:
+              already_started: Турнир уже начался
+              not_enough_members: Чтобы начать турнир, нужно минимум 2 участника
+              round_incomplete: Жеребьёвку следующего тура можно провести только после ввода всех результатов текущего тура
+              results_missing: Завершить турнир можно только после ввода всех результатов
+              results_entered: Удалить жеребьёвку можно только до ввода первого результата
+              cannot_delete_round: Удалить можно только последний тур идущего турнира по швейцарской системе

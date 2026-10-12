@@ -1,30 +1,30 @@
-require "test_helper"
+require "rails_helper"
 
-class Pairing::SwissTest < ActiveSupport::TestCase
-  test "first round pairs the top half against the bottom half, alternating colors by board" do
+RSpec.describe Pairing::Swiss do
+  it "pairs the top half against the bottom half in round 1, alternating colors by board" do
     tournament = create_tournament(players: Player.all, rounds: 3)
-    assert tournament.start
 
+    expect(tournament.start).to be(true)
     games = tournament.rounds.first.games.map { |game| [ game.board, game.white_player.nickname, game.black_player.nickname ] }
-    assert_equal [
+    expect(games).to eq([
       [ 1, "anna_k", "erikj" ],
       [ 2, "fatima", "boris" ],
       [ 3, "chenwei", "giorgi" ],
       [ 4, "hana", "daria" ]
-    ], games
+    ])
   end
 
-  test "winners meet winners in round two" do
+  it "makes winners meet winners in round 2, top half against bottom half" do
     tournament = create_tournament(players: Player.all, rounds: 3)
     tournament.start
     play_round(tournament.current_round)
 
-    assert tournament.pair_next_round
+    expect(tournament.pair_next_round).to be(true)
     top_boards = tournament.current_round.games.first(2).map { |game| game.players.map(&:nickname).sort }
-    assert_equal [ %w[ anna_k chenwei ], %w[ boris daria ] ], top_boards, "top half of the 1-point group meets the bottom half"
+    expect(top_boards).to eq([ %w[ anna_k chenwei ], %w[ boris daria ] ])
   end
 
-  test "no rematches and balanced colors across a full event" do
+  it "avoids rematches and keeps colors balanced over a full event" do
     players = create_players(12)
     tournament = create_tournament(players:, rounds: 7)
     tournament.start
@@ -36,22 +36,22 @@ class Pairing::SwissTest < ActiveSupport::TestCase
     end
 
     pairs = tournament.games.where.not(result: :bye).map { |game| [ game.white_player_id, game.black_player_id ].sort }
-    assert_equal pairs.size, pairs.uniq.size, "nobody met the same opponent twice"
+    expect(pairs).to eq(pairs.uniq), "nobody met the same opponent twice"
 
     players.each do |player|
       whites = tournament.games.where(white_player: player).where.not(result: :bye).count
       blacks = tournament.games.where(black_player: player).count
-      assert_operator (whites - blacks).abs, :<=, 2, "#{player.name} has #{whites} whites and #{blacks} blacks"
+      expect((whites - blacks).abs).to be <= 2, "#{player.name} has #{whites} whites and #{blacks} blacks"
     end
   end
 
-  test "odd field gives the bye to the lowest ranked player, never twice to the same player" do
+  it "gives the bye to the lowest ranked player and never twice to the same player" do
     tournament = create_tournament(players: Player.where.not(id: players(:giorgi)), rounds: 5)
     tournament.start
 
     bye = tournament.current_round.games.find(&:bye?)
-    assert_equal players(:hana), bye.white_player, "unrated player is seeded last"
-    assert_equal 4, bye.board
+    expect(bye.white_player).to eq(players(:hana)), "the unrated player is seeded last"
+    expect(bye.board).to eq(4)
 
     4.times do
       play_round(tournament.current_round)
@@ -59,11 +59,11 @@ class Pairing::SwissTest < ActiveSupport::TestCase
     end
 
     bye_players = tournament.games.bye.map(&:white_player_id)
-    assert_equal 5, bye_players.size
-    assert_equal bye_players.size, bye_players.uniq.size
+    expect(bye_players.size).to eq(5)
+    expect(bye_players).to eq(bye_players.uniq)
   end
 
-  test "late entry is paired from the next round" do
+  it "pairs late entries from the next round" do
     tournament = create_tournament(players: Player.by_rating.first(6), rounds: 3)
     tournament.start
     play_round(tournament.current_round)
@@ -71,7 +71,8 @@ class Pairing::SwissTest < ActiveSupport::TestCase
     tournament.participations.create!(player: players(:hana))
 
     tournament.pair_next_round
-    assert_equal 4, tournament.current_round.games.size
-    assert_includes tournament.current_round.games.flat_map(&:players), players(:hana)
+
+    expect(tournament.current_round.games.size).to eq(4)
+    expect(tournament.current_round.games.flat_map(&:players)).to include(players(:hana))
   end
 end

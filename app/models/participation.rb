@@ -2,7 +2,7 @@ class Participation < ApplicationRecord
   belongs_to :tournament, touch: true
   belongs_to :player
 
-  validates :player_id, uniqueness: { scope: :tournament_id, message: "is already a member of this tournament" }
+  validates :player_id, uniqueness: { scope: :tournament_id }
 
   before_destroy :ensure_no_games_played, prepend: true
 
@@ -13,7 +13,7 @@ class Participation < ApplicationRecord
   private
     def ensure_no_games_played
       if games_played?
-        errors.add(:base, "#{player.name} already has games in this tournament and can't be removed")
+        errors.add(:base, :games_played, name: player.name)
         throw :abort
       end
     end
