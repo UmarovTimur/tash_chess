@@ -1,0 +1,29 @@
+<% content_for :title, "Tournaments" %>
+
+<div class="page-head">
+  <div>
+    <h1>Tournaments</h1>
+    <p class="muted">Create an event, add members, pair rounds, enter results.</p>
+  </div>
+  <%= link_to "New tournament", new_tournament_path, class: "btn btn--primary" %>
+</div>
+
+<% if @tournaments.any? %>
+  <div class="tiles">
+    <% @tournaments.each do |tournament| %>
+      <article class="tile" id="<%= dom_id(tournament) %>">
+        <div class="tile__head">
+          <h2 class="tile__title"><%= link_to tournament.name, tournament, class: "stretched-link" %></h2>
+          <%= status_badge(tournament) %>
+        </div>
+        <p class="muted"><%= tournament_summary(tournament) %></p>
+        <p class="tile__meta"><%= pluralize(tournament.participations.size, "member") %></p>
+      </article>
+    <% end %>
+  </div>
+<% else %>
+  <div class="empty">
+    <p>No tournaments yet.</p>
+    <%= link_to "Create the first one", new_tournament_path, class: "btn btn--primary" %>
+  </div>
+<% end %>

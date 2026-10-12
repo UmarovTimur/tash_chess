@@ -1,0 +1,6 @@
+<% content_for :title, "Edit #{@player.name}" %>
+
+<div class="narrow">
+  <h1>Edit player</h1>
+  <div class="card"><%= render "form", player: @player, tournament: nil %></div>
+</div>

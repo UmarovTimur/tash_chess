@@ -1,0 +1,89 @@
+<% content_for :title, "Round #{@round.number} · #{@tournament.name}" %>
+<%= render "tournaments/header", tournament: @tournament, tab: :pairings %>
+
+<nav class="rounds" aria-label="Rounds">
+  <% @tournament.rounds.includes(:games).each do |round| %>
+    <%= link_to tournament_round_path(@tournament, round),
+          class: class_names("rounds__link", "rounds__link--active": round == @round, "rounds__link--done": round.complete?),
+          aria: { current: ("page" if round == @round) }, title: round.complete? ? "All results in" : "In play" do %>
+      <span class="rounds__label">Round</span> <%= round.number %>
+    <% end %>
+  <% end %>
+  <% (@tournament.rounds.size + 1..@tournament.rounds_count.to_i).each do |number| %>
+    <span class="rounds__link rounds__link--future" title="Not paired yet"><span class="rounds__label">Round</span> <%= number %></span>
+  <% end %>
+</nav>
+
+<% played = @games.count { |game| !game.pending? && !game.bye? } %>
+<% playable = @games.count { |game| !game.bye? } %>
+
+<section class="card card--flush pairings" aria-labelledby="round-title">
+  <div class="card__head">
+    <h2 id="round-title">Round <%= @round.number %> pairings</h2>
+    <span class="muted"><%= played %> of <%= playable %> results in</span>
+  </div>
+  <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="<%= playable %>" aria-valuenow="<%= played %>">
+    <span style="width: <%= playable.zero? ? 100 : (played * 100 / playable) %>%"></span>
+  </div>
+
+  <table class="table table--pairings">
+    <thead>
+      <tr>
+        <th class="board-col">Board</th>
+        <th class="side side--white">White</th>
+        <th class="result-col">Result</th>
+        <th class="side side--black">Black</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @games.each do |game| %>
+        <tr id="<%= dom_id(game) %>" class="<%= class_names("game", "game--pending": game.pending?, "game--bye": game.bye?) %>">
+          <% if game.bye? %>
+            <td class="board-col"><span class="board-no board-no--none" title="No board needed">—</span></td>
+            <td class="side side--white"><%= render "tournaments/rounds/player", player: game.white_player, color: :white, points: @standings[game.white_player]&.points_before(@round.number) %></td>
+            <td class="result-col"><span class="bye-label"><%= @tournament.bye_points.positive? ? "Bye · +#{@tournament.bye_points}" : "Rests" %></span></td>
+            <td class="side side--black muted">—</td>
+          <% else %>
+            <td class="board-col"><span class="board-no" title="Board <%= game.board %>"><%= game.board %></span></td>
+            <td class="side side--white"><%= render "tournaments/rounds/player", player: game.white_player, color: :white, points: @standings[game.white_player]&.points_before(@round.number) %></td>
+            <td class="result-col">
+              <% if @tournament.in_progress? %>
+                <div class="result-picker" role="group" aria-label="Result of board <%= game.board %>">
+                  <% Game::RESULT_LABELS.each do |result, label| %>
+                    <%= button_to label, game_path(game), method: :patch, params: { game: { result: } },
+                          class: class_names("result-btn", "result-btn--active": game.result == result),
+                          form_class: "result-picker__form", aria: { pressed: game.result == result } %>
+                  <% end %>
+                  <% unless game.pending? %>
+                    <%= button_to "×", game_path(game), method: :patch, params: { game: { result: "pending" } },
+                          class: "result-btn result-btn--clear", form_class: "result-picker__form",
+                          title: "Clear result", aria: { label: "Clear result of board #{game.board}" } %>
+                  <% end %>
+                </div>
+              <% else %>
+                <span class="result-final"><%= game.result_label.presence || "–" %></span>
+              <% end %>
+            </td>
+            <td class="side side--black"><%= render "tournaments/rounds/player", player: game.black_player, color: :black, points: @standings[game.black_player]&.points_before(@round.number) %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>
+
+<div class="round-actions">
+  <% if @round == @tournament.current_round && @tournament.can_pair_next_round? %>
+    <%= button_to "Pair round #{@round.number + 1}", tournament_rounds_path(@tournament), class: "btn btn--primary" %>
+  <% elsif @round == @tournament.current_round && @tournament.can_finish? %>
+    <%= button_to "Finish tournament", finish_tournament_path(@tournament), class: "btn btn--primary",
+          form: { data: { turbo_confirm: "Finish the tournament? Results will be locked." } } %>
+  <% end %>
+  <%= link_to "Standings", tournament_standings_path(@tournament), class: "btn" %>
+  <button type="button" class="btn btn--ghost" data-controller="print" data-action="print#print">Print pairings</button>
+  <% if @tournament.swiss? && @tournament.in_progress? && @round == @tournament.current_round %>
+    <%= button_to "Delete round #{@round.number}", tournament_round_path(@tournament, @round), method: :delete,
+          class: "btn btn--ghost btn--danger-text",
+          form: { data: { turbo_confirm: "Delete round #{@round.number} with its pairings and results? You can pair it again afterwards." } } %>
+  <% end %>
+</div>

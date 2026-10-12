@@ -1,0 +1,49 @@
+<% content_for :title, "Players" %>
+
+<div class="page-head">
+  <div>
+    <h1>Players</h1>
+    <p class="muted"><%= pluralize(Player.count, "player") %> in the club roster</p>
+  </div>
+  <%= link_to "New player", new_player_path, class: "btn btn--primary" %>
+</div>
+
+<%= form_with url: players_path, method: :get, class: "search",
+      data: { controller: "auto-submit", turbo_frame: "players", turbo_action: "replace" } do |form| %>
+  <%= form.search_field :query, value: @query, placeholder: "Search by name or nickname…", autocomplete: "off",
+        aria: { label: "Search players" }, data: { action: "input->auto-submit#submit" } %>
+<% end %>
+
+<%= turbo_frame_tag "players", target: "_top" do %>
+  <% if @players.any? %>
+    <div class="card card--flush">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Nickname</th>
+            <th class="num">FIDE</th>
+            <th class="actions"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @players.each do |player| %>
+            <tr id="<%= dom_id(player) %>">
+              <td><%= link_to player.name, player, class: "strong-link" %></td>
+              <td class="nick">@<%= player.nickname %></td>
+              <td class="num"><%= rating(player) %></td>
+              <td class="actions"><%= link_to "Edit", edit_player_path(player), class: "btn btn--small btn--ghost" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% elsif @query.present? %>
+    <div class="empty">No players match “<%= @query %>”.</div>
+  <% else %>
+    <div class="empty">
+      <p>No players yet.</p>
+      <%= link_to "Add the first player", new_player_path, class: "btn btn--primary" %>
+    </div>
+  <% end %>
+<% end %>

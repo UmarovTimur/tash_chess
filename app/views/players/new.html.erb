@@ -1,0 +1,9 @@
+<% content_for :title, "New player" %>
+
+<div class="narrow">
+  <h1>New player</h1>
+  <% if @tournament %>
+    <p class="muted">The player will join <strong><%= @tournament.name %></strong> right away.</p>
+  <% end %>
+  <div class="card"><%= render "form", player: @player, tournament: @tournament %></div>
+</div>

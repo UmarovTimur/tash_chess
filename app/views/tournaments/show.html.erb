@@ -1,0 +1,94 @@
+<% content_for :title, @tournament.name %>
+<%= render "header", tournament: @tournament, tab: :members %>
+
+<% if @tournament.in_progress? && (round = @tournament.current_round) %>
+  <div class="callout">
+    <span>Round <%= round.number %> is on. </span>
+    <%= link_to "See who plays whom →", tournament_round_path(@tournament, round), class: "strong-link" %>
+  </div>
+<% end %>
+
+<div class="<%= class_names("layout", "layout--split": @tournament.members_editable?) %>">
+  <section class="card card--flush" aria-labelledby="members-title">
+    <div class="card__head">
+      <h2 id="members-title">Members</h2>
+      <span class="muted"><%= pluralize(@participations.size, "player") %>, by rating</span>
+    </div>
+
+    <% if @participations.any? %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Player</th>
+            <th class="num">FIDE</th>
+            <% if @tournament.members_editable? %><th class="actions"><span class="visually-hidden">Actions</span></th><% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @participations.each.with_index(1) do |participation, seed| %>
+            <% player = participation.player %>
+            <tr id="<%= dom_id(participation) %>">
+              <td class="num muted"><%= seed %></td>
+              <td><%= link_to player.name, player, class: "strong-link" %> <span class="nick">@<%= player.nickname %></span></td>
+              <td class="num"><%= rating(player) %></td>
+              <% if @tournament.members_editable? %>
+                <td class="actions">
+                  <% unless @players_with_games.include?(player.id) %>
+                    <%= button_to "Remove", tournament_participation_path(@tournament, participation), method: :delete,
+                          class: "btn btn--small btn--ghost", aria: { label: "Remove #{player.name}" } %>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="empty empty--inset">No members yet. Add players from the club roster.</div>
+    <% end %>
+  </section>
+
+  <% if @tournament.members_editable? %>
+    <section class="card" aria-labelledby="add-title" data-controller="filter selection">
+      <div class="card__head card__head--plain">
+        <h2 id="add-title">Add players</h2>
+      </div>
+      <% if @tournament.in_progress? %>
+        <p class="hint">Late entries join from the next round with 0 points.</p>
+      <% end %>
+
+      <% if @available_players.any? %>
+        <input type="search" class="picker__filter" placeholder="Filter by name or nickname…" autocomplete="off"
+               aria-label="Filter players" data-action="input->filter#apply">
+
+        <%= form_with url: tournament_participations_path(@tournament), class: "picker" do |form| %>
+          <ul class="picker__list">
+            <% @available_players.each do |player| %>
+              <li data-filter-target="item" data-filter-text="<%= "#{player.name} #{player.nickname}".downcase %>">
+                <label class="picker__item">
+                  <%= check_box_tag "player_ids[]", player.id, false, id: dom_id(player, :pick),
+                        data: { selection_target: "checkbox", action: "selection#update" } %>
+                  <span class="picker__name"><%= player.name %> <span class="nick">@<%= player.nickname %></span></span>
+                  <span class="picker__rating"><%= rating(player) %></span>
+                </label>
+              </li>
+            <% end %>
+          </ul>
+          <p class="picker__none muted" data-filter-target="empty" hidden>Nobody matches.</p>
+
+          <div class="picker__footer">
+            <button type="button" class="btn btn--small btn--ghost" data-action="selection#toggleVisible">Select all shown</button>
+            <%= form.button "Add selected", class: "btn btn--primary", disabled: true, data: { selection_target: "submit" } %>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="muted">Everyone in the roster is already a member.</p>
+      <% end %>
+
+      <p class="picker__new">
+        Not in the roster? <%= link_to "Register a new player", new_player_path(tournament_id: @tournament.id), class: "strong-link" %>
+      </p>
+    </section>
+  <% end %>
+</div>

@@ -1,0 +1,8 @@
+<div class="player">
+  <%= piece_color(color) %>
+  <div class="player__text">
+    <%= link_to player.name, player, class: "player__name" %>
+    <span class="player__meta"><span class="nick">@<%= player.nickname %></span><% if player.fide_rating %> · <%= player.fide_rating %><% end %></span>
+  </div>
+  <% if points %><span class="player__points" title="Points before this round"><%= format_score(points) %></span><% end %>
+</div>

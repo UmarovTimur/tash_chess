@@ -1,0 +1,53 @@
+<%= turbo_stream_from tournament %>
+
+<header class="tournament-head">
+  <div class="page-head">
+    <div>
+      <p class="crumbs"><%= link_to "Tournaments", tournaments_path %></p>
+      <h1><%= tournament.name %> <%= status_badge(tournament) %></h1>
+      <p class="muted"><%= tournament_summary(tournament) %></p>
+    </div>
+
+    <div class="toolbar">
+      <% if tournament.registration? %>
+        <%= button_to "Start tournament", start_tournament_path(tournament), class: "btn btn--primary",
+              disabled: tournament.participations.size < 2,
+              form: { data: { turbo_confirm: "Start the tournament and pair #{tournament.round_robin? ? "all rounds" : "round 1"}?" } } %>
+      <% end %>
+      <% if tournament.can_finish? && !tournament.can_pair_next_round? %>
+        <%= button_to "Finish tournament", finish_tournament_path(tournament), class: "btn btn--primary",
+              form: { data: { turbo_confirm: "Finish the tournament? Results will be locked." } } %>
+      <% end %>
+      <% unless tournament.finished? %>
+        <%= link_to "Edit", edit_tournament_path(tournament), class: "btn" %>
+      <% end %>
+      <details class="menu">
+        <summary class="btn btn--ghost" aria-label="More actions">•••</summary>
+        <div class="menu__body">
+          <% if tournament.can_finish? && tournament.can_pair_next_round? %>
+            <%= button_to "Finish early", finish_tournament_path(tournament), class: "menu__item",
+                  form: { data: { turbo_confirm: "Finish now, without playing the remaining rounds?" } } %>
+          <% end %>
+          <% if tournament.can_reset? %>
+            <%= button_to "Undo start (remove pairings)", reset_tournament_path(tournament), class: "menu__item",
+                  form: { data: { turbo_confirm: "Remove all pairings and reopen registration?" } } %>
+          <% end %>
+          <%= button_to "Delete tournament", tournament, method: :delete, class: "menu__item menu__item--danger",
+                form: { data: { turbo_confirm: "Delete “#{tournament.name}” with all its rounds and results?" } } %>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <nav class="tabs" aria-label="Tournament sections">
+    <%= link_to tournament_path(tournament), class: class_names("tab", "tab--active": tab == :members) do %>
+      Members <span class="tab__count"><%= tournament.participations.size %></span>
+    <% end %>
+    <% if (round = tournament.current_round) %>
+      <%= link_to "Pairings", tournament_round_path(tournament, round), class: class_names("tab", "tab--active": tab == :pairings) %>
+    <% else %>
+      <span class="tab tab--disabled" title="Pairings appear when the tournament starts">Pairings</span>
+    <% end %>
+    <%= link_to "Standings", tournament_standings_path(tournament), class: class_names("tab", "tab--active": tab == :standings) %>
+  </nav>
+</header>

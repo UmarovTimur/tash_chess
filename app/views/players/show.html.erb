@@ -1,0 +1,36 @@
+<% content_for :title, @player.name %>
+
+<div class="page-head">
+  <div>
+    <p class="crumbs"><%= link_to "Players", players_path %></p>
+    <h1><%= @player.name %></h1>
+    <p class="muted"><span class="nick">@<%= @player.nickname %></span> · FIDE <%= rating(@player) %></p>
+  </div>
+  <div class="toolbar">
+    <%= link_to "Edit", edit_player_path(@player), class: "btn" %>
+    <%= button_to "Delete", @player, method: :delete, class: "btn btn--danger",
+          form: { data: { turbo_confirm: "Delete #{@player.name}? This can't be undone." } } %>
+  </div>
+</div>
+
+<section class="card">
+  <h2>Tournaments</h2>
+  <% if @tournaments.any? %>
+    <ul class="list">
+      <% @tournaments.each do |tournament| %>
+        <li class="list__item">
+          <%= link_to tournament.name, tournament, class: "strong-link" %>
+          <span class="muted"><%= tournament_summary(tournament) %></span>
+          <span class="list__end">
+            <% unless tournament.registration? %>
+              <span class="score"><%= format_score(tournament.standings[@player]&.points) %> pts</span>
+            <% end %>
+            <%= status_badge(tournament) %>
+          </span>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="muted">Hasn't played in any tournament yet.</p>
+  <% end %>
+</section>

@@ -1,0 +1,52 @@
+<%= form_with model: tournament, class: "form", data: { controller: "pairing-form" } do |form| %>
+  <%= render "shared/errors", record: tournament %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, required: true, maxlength: 120, autofocus: true, placeholder: "Autumn club championship" %>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <%= form.label :starts_on, "Date" %>
+      <%= form.date_field :starts_on %>
+    </div>
+    <div class="field">
+      <%= form.label :location %>
+      <%= form.text_field :location, maxlength: 120, placeholder: "Optional" %>
+    </div>
+  </div>
+
+  <fieldset class="field">
+    <legend>Pairing system</legend>
+    <% if tournament.new_record? || tournament.registration? %>
+      <div class="choices">
+        <% { "swiss" => "Players with similar scores meet each other. Good for many players and few rounds.",
+             "round_robin" => "Everybody plays everybody. All rounds are paired when the tournament starts." }.each do |system, description| %>
+          <label class="choice">
+            <%= form.radio_button :pairing_system, system, data: { action: "pairing-form#toggle", pairing_form_target: "system" } %>
+            <span>
+              <strong><%= Tournament.pairing_system_label(system) %></strong>
+              <span class="hint"><%= description %></span>
+            </span>
+          </label>
+        <% end %>
+      </div>
+    <% else %>
+      <p><%= tournament.pairing_system_label %> <span class="hint">(can't be changed after the start)</span></p>
+    <% end %>
+  </fieldset>
+
+  <% if tournament.new_record? || tournament.swiss? %>
+    <div class="field" data-pairing-form-target="rounds">
+      <%= form.label :rounds_count, "Number of rounds" %>
+      <%= form.number_field :rounds_count, min: [ 1, tournament.rounds.size ].max, max: Tournament::MAX_ROUNDS, step: 1, class: "input--short" %>
+      <p class="hint">Rule of thumb for Swiss: enough rounds that only one player can win all games (e.g. 5 rounds for up to 32 players).</p>
+    </div>
+  <% end %>
+
+  <div class="form__actions">
+    <%= form.submit class: "btn btn--primary" %>
+    <%= link_to "Cancel", tournament.persisted? ? tournament : tournaments_path, class: "btn btn--ghost" %>
+  </div>
+<% end %>

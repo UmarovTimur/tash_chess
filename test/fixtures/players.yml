@@ -1,0 +1,38 @@
+anna:
+  name: Anna Kowalska
+  nickname: anna_k
+  fide_rating: 2215
+
+boris:
+  name: Boris Lebedev
+  nickname: boris
+  fide_rating: 2140
+
+chen:
+  name: Chen Wei
+  nickname: chenwei
+  fide_rating: 2088
+
+daria:
+  name: Daria Melnyk
+  nickname: daria
+  fide_rating: 1990
+
+erik:
+  name: Erik Johansson
+  nickname: erikj
+  fide_rating: 1934
+
+fatima:
+  name: Fatima Nurlanova
+  nickname: fatima
+  fide_rating: 1876
+
+giorgi:
+  name: Giorgi Beridze
+  nickname: giorgi
+  fide_rating: 1812
+
+hana:
+  name: Hana Novak
+  nickname: hana

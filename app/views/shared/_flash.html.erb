@@ -1,0 +1,7 @@
+<div id="flash" class="flash-stack">
+  <% flash.each do |type, message| %>
+    <% alert = type == "alert" %>
+    <%= tag.div message, class: "flash flash--#{alert ? "alert" : "notice"}", role: alert ? "alert" : "status",
+          data: { controller: "flash", action: "click->flash#dismiss", flash_timeout_value: (10_000 if alert) } %>
+  <% end %>
+</div>
