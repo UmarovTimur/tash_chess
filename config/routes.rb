@@ -11,7 +11,12 @@ Rails.application.routes.draw do
     end
 
     scope module: :tournaments do
-      resources :participations, only: %i[ create destroy ]
+      resources :participations, only: %i[ create destroy ] do
+        member do
+          post :withdraw
+          post :reinstate
+        end
+      end
       resources :rounds, only: %i[ show create destroy ], param: :number
       resource :standings, only: :show
     end

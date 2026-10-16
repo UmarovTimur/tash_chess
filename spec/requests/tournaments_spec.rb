@@ -94,6 +94,34 @@ RSpec.describe "Tournaments" do
     expect(flash[:notice]).to include(I18n.t("tournaments.late_entry.no_rounds_left"))
   end
 
+  it "withdraws a player from a running tournament and brings them back" do
+    tournament = create_tournament(players: Player.by_rating.first(4), rounds: 3)
+    tournament.start
+    participation = tournament.participations.find_by!(player: players(:daria))
+    row = "#participation_#{participation.id}"
+
+    get tournament_path(tournament)
+    expect(texts("#{row} button")).to eq([ I18n.t("tournaments.show.withdraw") ])
+
+    post withdraw_tournament_participation_path(tournament, participation)
+    expect(response).to redirect_to(tournament_path(tournament))
+    expect(flash[:notice]).to eq(I18n.t("tournaments.participations.withdraw.withdrawn", name: players(:daria).name))
+
+    follow_redirect!
+    expect(texts("#{row} .badge")).to eq([ I18n.t("tournaments.withdrawn") ])
+    expect(texts("#{row} button")).to eq([ I18n.t("tournaments.show.reinstate") ])
+
+    get tournament_standings_path(tournament)
+    expect(texts(".table--standings .badge")).to eq([ I18n.t("tournaments.withdrawn") ])
+
+    post withdraw_tournament_participation_path(tournament, participation)
+    expect(flash[:alert]).to eq(I18n.t("activerecord.errors.models.tournament.attributes.base.cannot_withdraw"))
+
+    post reinstate_tournament_participation_path(tournament, participation)
+    expect(flash[:notice]).to eq(I18n.t("tournaments.participations.reinstate.reinstated", name: players(:daria).name))
+    expect(participation.reload).not_to be_withdrawn
+  end
+
   it "doesn't add members to a finished tournament" do
     tournament = create_tournament(players: Player.by_rating.first(2), rounds: 1)
     tournament.start

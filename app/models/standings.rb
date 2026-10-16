@@ -37,7 +37,16 @@ class Standings
     [ tournament.rounds.size, tournament.rounds_count.to_i ].max
   end
 
+  # Withdrawn members stay in the table with the games they played.
+  def withdrawn?(player)
+    withdrawn_player_ids.include?(player.id)
+  end
+
   private
+    def withdrawn_player_ids
+      @withdrawn_player_ids ||= tournament.participations.withdrawn.pluck(:player_id).to_set
+    end
+
     def rows_by_player_id
       @rows_by_player_id ||= rows.index_by { |row| row.player.id }
     end

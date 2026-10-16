@@ -57,7 +57,7 @@ class Pairing::RoundRobin
 
   private
     def slots
-      @slots ||= tournament.players.by_rating.to_a.then { |players| players.size.odd? ? players + [ nil ] : players }
+      @slots ||= tournament.active_players.by_rating.to_a.then { |players| players.size.odd? ? players + [ nil ] : players }
     end
 
     def planned_rounds

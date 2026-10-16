@@ -42,6 +42,11 @@ class Tournament < ApplicationRecord
     !finished?
   end
 
+  # Members still playing. Withdrawn ones keep their games and their place in the standings, but aren't paired again.
+  def active_players
+    players.merge(Participation.active)
+  end
+
   # Swiss: the latest round. Round robin (paired up front): the first round still waiting for results.
   def current_round
     return rounds.last if swiss?
@@ -71,7 +76,7 @@ class Tournament < ApplicationRecord
   end
 
   def can_pair_next_round?
-    swiss? && in_progress? && rounds.size < rounds_count && all_games_complete?
+    swiss? && in_progress? && rounds.size < rounds_count && all_games_complete? && active_players.many?
   end
 
   def can_finish?
@@ -133,6 +138,8 @@ class Tournament < ApplicationRecord
       rounds.destroy_all
       # A round robin that was one full cycle stays "one full cycle", whatever the members are at the next start.
       one_cycle = round_robin? && rounds_count == Pairing::RoundRobin.cycle_length(participations.count)
+      # With the rounds gone, members who withdrew have nothing left in the tournament.
+      participations.withdrawn.delete_all
       update!(status: :registration, rounds_count: one_cycle ? nil : rounds_count)
     end
   end
@@ -146,10 +153,45 @@ class Tournament < ApplicationRecord
     end
   end
 
-  def withdraw(participation)
+  # Removes a member who hasn't played yet, as if they never joined.
+  def unenroll(participation)
     transaction do
       return false unless participation.destroy
 
+      replan_round_robin
+    end
+    true
+  end
+
+  # A member leaving a running tournament keeps the games already played, so the standings and the opponents'
+  # tie-breaks stay as they are, but nobody is paired against them again: a Swiss leaves them out of the next
+  # pairing, a round robin pairs the rounds that haven't started again without them. A game of theirs still
+  # waiting for a result is lost by forfeit; the arbiter can still change it.
+  def withdraw(participation)
+    unless in_progress? && !participation.withdrawn?
+      errors.add(:base, :cannot_withdraw)
+      return false
+    end
+
+    transaction do
+      participation.update!(withdrawn_at: Time.current)
+      # Re-pair before the forfeit: it may complete the round being played, and the next round would then be kept.
+      replan_round_robin
+      forfeit_pending_games(participation.player)
+    end
+    true
+  end
+
+  # Takes a withdrawn member back: they play from the next Swiss round, or in the round robin rounds that haven't
+  # started. Games forfeited when they left keep their results.
+  def reinstate(participation)
+    unless in_progress? && participation.withdrawn?
+      errors.add(:base, :cannot_reinstate)
+      return false
+    end
+
+    transaction do
+      participation.update!(withdrawn_at: nil)
       replan_round_robin
     end
     true
@@ -176,6 +218,12 @@ class Tournament < ApplicationRecord
   private
     def replan_round_robin
       Pairing::RoundRobin.new(self).replan if round_robin? && in_progress?
+    end
+
+    def forfeit_pending_games(player)
+      games.pending.merge(player.games).each do |game|
+        game.update!(result: game.white_player_id == player.id ? :black_won : :white_won)
+      end
     end
 
     def pairing_system_unchanged_after_start

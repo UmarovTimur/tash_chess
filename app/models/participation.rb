@@ -6,6 +6,13 @@ class Participation < ApplicationRecord
 
   before_destroy :ensure_no_games_played, prepend: true
 
+  scope :active, -> { where(withdrawn_at: nil) }
+  scope :withdrawn, -> { where.not(withdrawn_at: nil) }
+
+  def withdrawn?
+    withdrawn_at.present?
+  end
+
   # Games in rounds that are already fixed; planned round robin games are re-paired without the player.
   def games_played?
     tournament.fixed_games.merge(player.games).exists?

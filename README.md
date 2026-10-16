@@ -70,6 +70,12 @@ then wins. Fully tied players share a rank.
 - Players can join while the tournament runs (**Добавить игрока / Add player**). In a Swiss they play from the
   next round with 0 points. In a round robin the rounds that haven't started yet are paired again to include
   them; raise the number of rounds if they should meet everyone.
+- Players can leave a running tournament (**Снять / Withdraw** on the Members tab). Their games stay in the
+  standings, so the opponents' points and tie-breaks don't change, and they are marked as withdrawn. Nobody is paired
+  against them again: a Swiss leaves them out of the next pairing, and a round robin pairs the rounds that haven't
+  started again without them. A game of theirs that still has no result is scored as a loss (it can be changed like
+  any result). In a Swiss, if the round hasn't really started, delete it and pair it again so their opponent gets a game.
+  **Вернуть / Bring back** puts them back into the pairings.
 - Swiss: the latest round can be deleted and paired again. Round robin: changing the number of rounds re-pairs
   the rounds that haven't started.
 - **Undo start** (in the ••• menu) removes all pairings while no result has been entered yet.

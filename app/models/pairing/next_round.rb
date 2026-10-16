@@ -7,7 +7,8 @@
 #   there are opponents. A pairing that would leave the next round without such a pairing is avoided too;
 # * the bye goes to the lowest ranked of the players with the fewest byes (Swiss: a free point). When re-planning
 #   a round robin, where the bye is just a rest, it goes to whoever has played most, so late entries catch up;
-# * colors are balanced and alternated.
+# * colors are balanced and alternated;
+# * withdrawn members aren't paired.
 class Pairing::NextRound
   SEARCH_LIMIT = 20_000
 
@@ -97,7 +98,8 @@ class Pairing::NextRound
         end
       end
 
-      entries.values
+      # Withdrawn members aren't paired, but their games above still count for their opponents' scores and colors.
+      entries.values_at(*tournament.active_players.ids)
         .sort_by { |e| [ -e.score, -(e.player.fide_rating || 0), e.player.name, e.player.id ] }
         .each_with_index { |entry, index| entry.rank = index }
     end

@@ -30,11 +30,21 @@
             <% player = participation.player %>
             <tr id="<%= dom_id(participation) %>">
               <td class="num muted"><%= seed %></td>
-              <td><%= link_to player.name, player, class: "strong-link" %> <span class="nick">@<%= player.nickname %></span></td>
+              <td>
+                <%= link_to player.name, player, class: "strong-link" %> <span class="nick">@<%= player.nickname %></span>
+                <%= withdrawn_badge if participation.withdrawn? %>
+              </td>
               <td class="num"><%= rating(player) %></td>
               <% if @tournament.members_editable? %>
                 <td class="actions">
-                  <% unless @players_with_games.include?(player.id) %>
+                  <% if participation.withdrawn? %>
+                    <%= button_to t(".reinstate"), reinstate_tournament_participation_path(@tournament, participation),
+                          class: "btn btn--small btn--ghost", aria: { label: t(".reinstate_player", name: player.name) } %>
+                  <% elsif @players_with_games.include?(player.id) %>
+                    <%= button_to t(".withdraw"), withdraw_tournament_participation_path(@tournament, participation),
+                          class: "btn btn--small btn--ghost", aria: { label: t(".withdraw_player", name: player.name) },
+                          form: { data: { turbo_confirm: t(".confirm_withdraw", name: player.name) } } %>
+                  <% else %>
                     <%= button_to t(".remove"), tournament_participation_path(@tournament, participation), method: :delete,
                           class: "btn btn--small btn--ghost", aria: { label: t(".remove_player", name: player.name) } %>
                   <% end %>

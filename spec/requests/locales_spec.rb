@@ -36,6 +36,7 @@ RSpec.describe "Locales" do
       swiss.start
       play_round(swiss.current_round)
       swiss.pair_next_round
+      swiss.withdraw(swiss.participations.find_by!(player: players(:anna)))
       finished = create_tournament(system: :round_robin, rounds: nil, players: Player.by_rating.first(3))
       finished.start
       finished.rounds.each { |round| play_round(round) { :draw } }

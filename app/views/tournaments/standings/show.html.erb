@@ -27,7 +27,10 @@
           <% @standings.each do |row| %>
             <tr class="<%= class_names("standing", "standing--podium": @tournament.finished? && row.rank <= 3) %>">
               <td class="num rank"><%= row.rank %></td>
-              <td><%= link_to row.player.name, row.player, class: "strong-link" %> <span class="nick">@<%= row.player.nickname %></span></td>
+              <td>
+                <%= link_to row.player.name, row.player, class: "strong-link" %> <span class="nick">@<%= row.player.nickname %></span>
+                <%= withdrawn_badge if @standings.withdrawn?(row.player) %>
+              </td>
               <td class="num"><%= rating(row.player) %></td>
               <% row.cells.each do |cell| %>
                 <td class="round-cell"><%= standings_cell(cell) %></td>

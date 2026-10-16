@@ -115,6 +115,11 @@ en:
       player: Player
       remove: Remove
       remove_player: "Remove %{name}"
+      withdraw: Withdraw
+      withdraw_player: "Withdraw %{name}"
+      confirm_withdraw: "Withdraw %{name} from the tournament? Their results stay in the standings and nobody will be paired against them again. A game still without a result is scored as a loss."
+      reinstate: Bring back
+      reinstate_player: "Bring %{name} back"
       no_members: No members yet. Add players from the club roster.
       add_players: Add players
       late_entries:
@@ -128,6 +133,7 @@ en:
       everyone_added: Everyone in the roster is already a member.
       not_in_roster: Not in the roster?
       register_player: Register a new player
+    withdrawn: Withdrawn
     late_entry:
       next_round: New members play from the next round.
       replanned: "Rounds from round %{number} on were paired again."
@@ -159,6 +165,10 @@ en:
         none_selected: Choose at least one player to add.
       destroy:
         removed: "%{name} left the tournament."
+      withdraw:
+        withdrawn: "%{name} withdrew. Their results stay in the standings, and they won’t be paired again."
+      reinstate:
+        reinstated: "%{name} is back in the tournament and will be paired again."
     rounds:
       show:
         round: "Round %{number}"
@@ -307,3 +317,5 @@ en:
               results_missing: The tournament can be finished only when every result is entered
               results_entered: Pairings can be reset only before any result is entered
               cannot_delete_round: Only the latest round of a running Swiss tournament can be deleted
+              cannot_withdraw: Only a member still playing in a running tournament can withdraw
+              cannot_reinstate: Only a member who withdrew from a running tournament can be brought back

@@ -18,6 +18,10 @@ module TournamentsHelper
     end
   end
 
+  def withdrawn_badge
+    tag.span t("tournaments.withdrawn"), class: "badge badge--withdrawn"
+  end
+
   def standings_cell(cell)
     return tag.span("", class: "cell cell--empty") if cell.nil?
 

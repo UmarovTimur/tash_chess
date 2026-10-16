@@ -127,9 +127,9 @@ RSpec.describe Pairing::RoundRobin do
       tournament.enroll([ players(:hana) ])
       participation = tournament.participations.find_by!(player: players(:hana))
 
-      expect(tournament.withdraw(participation)).to be(true)
+      expect(tournament.unenroll(participation)).to be(true)
       expect(tournament.games.reload.flat_map(&:players)).not_to include(players(:hana))
-      expect(tournament.withdraw(tournament.participations.first)).to be(false), "members of the started rounds stay"
+      expect(tournament.unenroll(tournament.participations.first)).to be(false), "members of the started rounds stay"
     end
 
     it "can't cut the rounds being played" do

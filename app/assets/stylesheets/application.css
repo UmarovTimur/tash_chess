@@ -221,6 +221,7 @@ p { margin: 0.25rem 0; }
 .badge--registration { background: var(--warn-soft); color: var(--warn); }
 .badge--in-progress { background: var(--accent-soft); color: var(--accent); }
 .badge--finished { background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); }
+.badge--withdrawn { background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); margin-left: 0.25rem; }
 
 .flash-stack { position: fixed; top: 68px; right: 20px; z-index: 30; display: grid; gap: 0.5rem; max-width: min(420px, calc(100vw - 40px)); }
 .flash {
