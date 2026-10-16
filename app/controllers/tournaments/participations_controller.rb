@@ -2,11 +2,11 @@ class Tournaments::ParticipationsController < Tournaments::BaseController
   before_action :ensure_members_editable
 
   def create
-    players = Player.where(id: params[:player_ids]).where.not(id: @tournament.players.select(:id))
+    players = Player.where(id: params[:player_ids]).where.not(id: @tournament.players.select(:id)).to_a
 
     if players.any?
-      Tournament.transaction { players.each { |player| @tournament.participations.create!(player:) } }
-      redirect_to @tournament, notice: t(".added", count: players.size)
+      @tournament.enroll(players)
+      redirect_to @tournament, notice: [ t(".added", count: players.size), late_entry_note(@tournament) ].compact.join(" ")
     else
       redirect_to @tournament, alert: t(".none_selected")
     end
@@ -15,7 +15,7 @@ class Tournaments::ParticipationsController < Tournaments::BaseController
   def destroy
     participation = @tournament.participations.find(params[:id])
 
-    if participation.destroy
+    if @tournament.withdraw(participation)
       redirect_to @tournament, notice: t(".removed", name: participation.player.name), status: :see_other
     else
       redirect_to @tournament, alert: participation.errors.full_messages.to_sentence, status: :see_other

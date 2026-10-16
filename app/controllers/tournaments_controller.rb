@@ -8,7 +8,7 @@ class TournamentsController < ApplicationController
   def show
     @participations = @tournament.participations.joins(:player).includes(:player).merge(Player.by_rating)
     @available_players = Player.alphabetical.where.not(id: @tournament.participations.select(:player_id))
-    @players_with_games = @tournament.games.pluck(:white_player_id, :black_player_id).flatten.compact.to_set
+    @players_with_games = @tournament.fixed_games.pluck(:white_player_id, :black_player_id).flatten.compact.to_set
   end
 
   def new

@@ -18,6 +18,9 @@
         <%= button_to t(".finish"), finish_tournament_path(tournament), class: "btn btn--primary",
               form: { data: { turbo_confirm: t(".confirm_finish") } } %>
       <% end %>
+      <% if tournament.in_progress? && tab != :members %>
+        <%= link_to t(".add_player"), tournament_path(tournament, anchor: "add-players"), class: "btn" %>
+      <% end %>
       <% unless tournament.finished? %>
         <%= link_to t("shared.edit"), edit_tournament_path(tournament), class: "btn" %>
       <% end %>

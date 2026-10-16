@@ -1,18 +1,21 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Shows the "number of rounds" field only for Swiss tournaments (round robins derive it from the members).
+// Swiss needs a number of rounds; a round robin may leave it blank (one full cycle). Shows the matching hint.
 export default class extends Controller {
-  static targets = [ "system", "rounds" ]
+  static targets = [ "rounds", "hint" ]
+  static values = { system: String }
 
   connect() {
-    this.toggle()
+    this.update()
   }
 
-  toggle() {
-    if (!this.hasRoundsTarget || !this.hasSystemTarget) return
+  toggle(event) {
+    this.systemValue = event.target.value
+    this.update()
+  }
 
-    const swiss = this.systemTargets.find(radio => radio.checked)?.value !== "round_robin"
-    this.roundsTarget.hidden = !swiss
-    this.roundsTarget.querySelectorAll("input").forEach(input => input.disabled = !swiss)
+  update() {
+    this.hintTargets.forEach(hint => hint.hidden = hint.dataset.system !== this.systemValue)
+    if (this.hasRoundsTarget) this.roundsTarget.required = this.systemValue === "swiss"
   }
 }

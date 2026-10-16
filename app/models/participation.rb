@@ -6,8 +6,9 @@ class Participation < ApplicationRecord
 
   before_destroy :ensure_no_games_played, prepend: true
 
+  # Games in rounds that are already fixed; planned round robin games are re-paired without the player.
   def games_played?
-    tournament.games.merge(player.games).exists?
+    tournament.fixed_games.merge(player.games).exists?
   end
 
   private

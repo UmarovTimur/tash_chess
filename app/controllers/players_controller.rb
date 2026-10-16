@@ -25,8 +25,8 @@ class PlayersController < ApplicationController
 
     if @player.save
       if @tournament&.members_editable?
-        @tournament.participations.create!(player: @player)
-        redirect_to @tournament, notice: t(".joined", name: @player.name)
+        @tournament.enroll([ @player ])
+        redirect_to @tournament, notice: [ t(".joined", name: @player.name), late_entry_note(@tournament) ].compact.join(" ")
       else
         redirect_to @player, notice: t(".created", name: @player.name)
       end

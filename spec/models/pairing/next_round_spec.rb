@@ -1,6 +1,19 @@
 require "rails_helper"
 
-RSpec.describe Pairing::Swiss do
+RSpec.describe Pairing::NextRound do
+  def play_event(tournament, seed: 42)
+    random = Random.new(seed)
+    tournament.start
+    tournament.rounds_count.times do |index|
+      play_round(tournament.current_round) { %i[ white_won black_won draw ].sample(random:) }
+      tournament.pair_next_round unless index == tournament.rounds_count - 1
+    end
+  end
+
+  def meetings(tournament)
+    tournament.games.where.not(result: :bye).includes(:round).group_by { |game| [ game.white_player_id, game.black_player_id ].sort }
+  end
+
   it "pairs the top half against the bottom half in round 1, alternating colors by board" do
     tournament = create_tournament(players: Player.all, rounds: 3)
 
@@ -42,6 +55,39 @@ RSpec.describe Pairing::Swiss do
       whites = tournament.games.where(white_player: player).where.not(result: :bye).count
       blacks = tournament.games.where(black_player: player).count
       expect((whites - blacks).abs).to be <= 2, "#{player.name} has #{whites} whites and #{blacks} blacks"
+    end
+  end
+
+  context "with more rounds than opponents" do
+    it "lets everyone meet everyone once before anyone meets twice, never in consecutive rounds" do
+      tournament = create_tournament(players: create_players(6), rounds: 10)
+
+      expect(tournament.start).to be(true)
+      play_event(tournament)
+
+      by_pair = meetings(tournament)
+      expect(by_pair.size).to eq(15)
+      expect(by_pair.values.map(&:size)).to all(eq(2))
+      expect(by_pair.values.map { |games| games.map { |game| game.round.number }.min }.max).to be <= 5, "first meetings fill rounds 1-5"
+
+      round_numbers = by_pair.values.map { |games| games.map { |game| game.round.number }.sort }
+      expect(round_numbers).to all(satisfy { |numbers| numbers.each_cons(2).none? { |a, b| b - a == 1 } })
+    end
+
+    it "spreads byes evenly" do
+      tournament = create_tournament(players: create_players(5), rounds: 10)
+      play_event(tournament)
+
+      expect(tournament.games.bye.group_by(&:white_player_id).values.map(&:size)).to eq([ 2 ] * 5)
+      expect(meetings(tournament).values.map(&:size)).to all(eq(2))
+    end
+
+    it "pairs two players every round with alternating colors" do
+      tournament = create_tournament(players: [ players(:anna), players(:boris) ], rounds: 4)
+      play_event(tournament)
+
+      expect(tournament.games.includes(:round).sort_by { |game| game.round.number }.map(&:white_player))
+        .to eq([ players(:anna), players(:boris), players(:anna), players(:boris) ])
     end
   end
 

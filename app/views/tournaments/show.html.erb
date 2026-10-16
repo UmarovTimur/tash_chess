@@ -50,12 +50,12 @@
   </section>
 
   <% if @tournament.members_editable? %>
-    <section class="card" aria-labelledby="add-title" data-controller="filter selection" data-selection-label-value="<%= t(".add_selected") %>">
+    <section class="card" id="add-players" aria-labelledby="add-title" data-controller="filter selection" data-selection-label-value="<%= t(".add_selected") %>">
       <div class="card__head card__head--plain">
         <h2 id="add-title"><%= t(".add_players") %></h2>
       </div>
       <% if @tournament.in_progress? %>
-        <p class="hint"><%= t(".late_entries") %></p>
+        <p class="hint"><%= t(".late_entries.#{@tournament.pairing_system}") %></p>
       <% end %>
 
       <% if @available_players.any? %>

@@ -8,6 +8,19 @@ class ApplicationController < ActionController::Base
   around_action :switch_locale
 
   private
+    # When players join a running tournament, says from which round they play.
+    def late_entry_note(tournament)
+      return unless tournament.in_progress?
+
+      if !tournament.rounds_ahead?
+        t("tournaments.late_entry.no_rounds_left")
+      elsif tournament.round_robin?
+        t("tournaments.late_entry.replanned", number: tournament.fixed_rounds_count + 1)
+      else
+        t("tournaments.late_entry.next_round")
+      end
+    end
+
     # Russian unless the visitor picked another language (there are no accounts, so the choice lives in a cookie).
     def switch_locale(&action)
       locale = cookies[:locale].presence_in(I18n.available_locales.map(&:to_s)) || I18n.default_locale

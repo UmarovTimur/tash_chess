@@ -72,13 +72,44 @@ RSpec.describe "Tournaments" do
     expect(page_html.css(".rounds__link").size).to eq(5)
   end
 
-  it "doesn't add members to a running round robin" do
-    tournament = create_tournament(system: :round_robin, rounds: nil, players: Player.by_rating.first(4))
+  it "adds a player to a running round robin and re-pairs the rounds that haven't started" do
+    tournament = create_tournament(system: :round_robin, rounds: 5, players: Player.by_rating.first(4))
     tournament.start
+
+    get tournament_round_path(tournament, 1)
+    expect(page_html.at_css("a[href='#{tournament_path(tournament, anchor: "add-players")}']").text).to eq(I18n.t("tournaments.header.add_player"))
 
     post tournament_participations_path(tournament), params: { player_ids: [ players(:hana).id ] }
     expect(response).to redirect_to(tournament_path(tournament))
-    expect(tournament.participations.count).to eq(4)
+    expect(flash[:notice]).to eq("#{I18n.t("tournaments.participations.create.added", count: 1)} #{I18n.t("tournaments.late_entry.replanned", number: 2)}")
+    expect(tournament.participations.count).to eq(5)
+    expect(tournament.rounds.reload.drop(1).flat_map { |round| round.games.flat_map(&:players) }).to include(players(:hana))
+  end
+
+  it "tells when a late entry has no rounds left to play" do
+    tournament = create_tournament(players: Player.by_rating.first(4), rounds: 1)
+    tournament.start
+
+    post tournament_participations_path(tournament), params: { player_ids: [ players(:hana).id ] }
+    expect(flash[:notice]).to include(I18n.t("tournaments.late_entry.no_rounds_left"))
+  end
+
+  it "doesn't add members to a finished tournament" do
+    tournament = create_tournament(players: Player.by_rating.first(2), rounds: 1)
+    tournament.start
+    play_round(tournament.current_round)
+    tournament.finish
+
+    post tournament_participations_path(tournament), params: { player_ids: [ players(:hana).id ] }
+    expect(flash[:alert]).to eq(I18n.t("tournaments.participations.locked"))
+    expect(tournament.participations.count).to eq(2)
+  end
+
+  it "starts a Swiss with more rounds than opponents" do
+    tournament = create_tournament(players: Player.by_rating.first(4), rounds: 10)
+
+    post start_tournament_path(tournament)
+    expect(tournament.reload).to be_in_progress
   end
 
   it "doesn't change a bye result" do

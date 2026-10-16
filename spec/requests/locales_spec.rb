@@ -40,6 +40,8 @@ RSpec.describe "Locales" do
       finished.start
       finished.rounds.each { |round| play_round(round) { :draw } }
       finished.finish
+      round_robin = create_tournament(system: :round_robin, rounds: 6, players: Player.by_rating.first(4))
+      round_robin.start
 
       [
         root_path, new_tournament_path, players_path, players_path(query: "zzz"), new_player_path(tournament_id: registration.id),
@@ -47,7 +49,9 @@ RSpec.describe "Locales" do
         tournament_path(registration), edit_tournament_path(registration), tournament_standings_path(registration),
         tournament_path(swiss), edit_tournament_path(swiss), tournament_round_path(swiss, 1), tournament_round_path(swiss, 2),
         tournament_standings_path(swiss),
-        tournament_path(finished), tournament_round_path(finished, 1), tournament_standings_path(finished)
+        tournament_path(finished), tournament_round_path(finished, 1), tournament_standings_path(finished),
+        tournament_path(round_robin), edit_tournament_path(round_robin), tournament_round_path(round_robin, 6),
+        tournament_standings_path(round_robin)
       ]
     end
 

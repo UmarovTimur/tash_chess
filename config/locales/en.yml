@@ -77,7 +77,10 @@ en:
         swiss: Players with similar scores meet each other. Good for many players and few rounds.
         round_robin: Everybody plays everybody. All rounds are paired when the tournament starts.
       pairing_system_locked: (can't be changed after the start)
-      rounds_hint: "Rule of thumb for Swiss: enough rounds that only one player can win all games (e.g. 5 rounds for up to 32 players)."
+      rounds_auto: auto
+      rounds_hints:
+        swiss: Any number of rounds. With more rounds than opponents, players meet again — as rarely as possible and not in consecutive rounds when avoidable.
+        round_robin: Blank — one full cycle (everyone plays everyone). More rounds repeat the cycle with colors reversed. In a running tournament the rounds that haven't started are paired again.
     new:
       title: New tournament
     edit:
@@ -85,6 +88,7 @@ en:
       heading: Edit tournament
     header:
       start: Start tournament
+      add_player: Add player
       confirm_start_all: Start the tournament and pair all rounds?
       confirm_start_first: Start the tournament and pair round 1?
       finish: Finish tournament
@@ -113,7 +117,9 @@ en:
       remove_player: "Remove %{name}"
       no_members: No members yet. Add players from the club roster.
       add_players: Add players
-      late_entries: Late entries join from the next round with 0 points.
+      late_entries:
+        swiss: Late entries join from the next round with 0 points.
+        round_robin: Rounds that haven't started are paired again to include new members.
       filter_placeholder: Filter by name or nickname…
       filter_label: Filter players
       nobody_matches: Nobody matches.
@@ -122,6 +128,10 @@ en:
       everyone_added: Everyone in the roster is already a member.
       not_in_roster: Not in the roster?
       register_player: Register a new player
+    late_entry:
+      next_round: New members play from the next round.
+      replanned: "Rounds from round %{number} on were paired again."
+      no_rounds_left: No rounds are left — increase the number of rounds so the new members can play.
     summary:
       round_of: "Round %{number} of %{total}"
       rounds:
@@ -290,7 +300,6 @@ en:
               locked: can't be changed after the tournament has started
             rounds_count:
               less_than_paired: "can't be less than the number of rounds already paired (%{count})"
-              too_many_rounds: "is too high for %{members} members (maximum is %{maximum})"
             base:
               already_started: Tournament has already started
               not_enough_members: At least 2 members are needed to start the tournament

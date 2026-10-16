@@ -47,6 +47,7 @@ class Standings
         [ player.id, Row.new(player, 0.0, 0, 0, 0, 0, 0.0, 0.0, Array.new(rounds_count)) ]
       end
       opponents = Hash.new { |hash, key| hash[key] = [] }
+      current_round_number = tournament.current_round&.number.to_i
 
       tournament.games.includes(:round).each do |game|
         index = game.round.number - 1
@@ -58,6 +59,8 @@ class Standings
           white.byes += 1
           white.cells[index] = Cell.new(points: tournament.bye_points, opponent: nil, color: nil, pending: false)
         elsif game.pending?
+          next if game.round.number > current_round_number # planned round robin game, not started yet
+
           white.cells[index] = Cell.new(points: nil, opponent: black.player, color: :white, pending: true)
           black.cells[index] = Cell.new(points: nil, opponent: white.player, color: :black, pending: true)
         else

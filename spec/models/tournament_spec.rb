@@ -17,11 +17,17 @@ RSpec.describe Tournament do
       expect(tournament.errors).to be_of_kind(:base, :not_enough_members)
     end
 
-    it "refuses a Swiss with more rounds than possible opponents" do
-      tournament = create_tournament(players: four_players, rounds: 4)
+    it "accepts more Swiss rounds than there are opponents" do
+      tournament = create_tournament(players: four_players, rounds: 10)
 
-      expect(tournament.start).to be(false)
-      expect(tournament.errors.where(:rounds_count, :too_many_rounds).first.options[:maximum]).to eq(3)
+      expect(tournament.start).to be(true)
+    end
+
+    it "plays one full round robin cycle when the number of rounds is blank" do
+      tournament = create_tournament(system: :round_robin, rounds: nil, players: Player.by_rating.first(5))
+      tournament.start
+
+      expect(tournament.rounds_count).to eq(5)
     end
 
     it "locks the pairing system" do
@@ -29,6 +35,17 @@ RSpec.describe Tournament do
       tournament.start
 
       expect(tournament.update(pairing_system: :round_robin)).to be(false)
+    end
+
+    it "lets players join a running Swiss for the next round" do
+      tournament = create_tournament(players: four_players, rounds: 3)
+      tournament.start
+      tournament.enroll([ players(:hana) ])
+
+      expect(tournament.current_round.games.flat_map(&:players)).not_to include(players(:hana))
+      play_round(tournament.current_round)
+      tournament.pair_next_round
+      expect(tournament.current_round.games.flat_map(&:players)).to include(players(:hana))
     end
 
     it "keeps members with games from leaving" do

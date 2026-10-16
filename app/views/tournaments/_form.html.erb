@@ -1,4 +1,4 @@
-<%= form_with model: tournament, class: "form", data: { controller: "pairing-form" } do |form| %>
+<%= form_with model: tournament, class: "form", data: { controller: "pairing-form", pairing_form_system_value: tournament.pairing_system } do |form| %>
   <%= render "shared/errors", record: tournament %>
 
   <div class="field">
@@ -23,7 +23,7 @@
       <div class="choices">
         <% Tournament.pairing_systems.each_key do |system| %>
           <label class="choice">
-            <%= form.radio_button :pairing_system, system, data: { action: "pairing-form#toggle", pairing_form_target: "system" } %>
+            <%= form.radio_button :pairing_system, system, data: { action: "pairing-form#toggle" } %>
             <span>
               <strong><%= Tournament.human_enum_name(:pairing_system, system) %></strong>
               <span class="hint"><%= t(".pairing_systems.#{system}") %></span>
@@ -36,13 +36,15 @@
     <% end %>
   </fieldset>
 
-  <% if tournament.new_record? || tournament.swiss? %>
-    <div class="field" data-pairing-form-target="rounds">
-      <%= form.label :rounds_count %>
-      <%= form.number_field :rounds_count, min: [ 1, tournament.rounds.size ].max, max: Tournament::MAX_ROUNDS, step: 1, class: "input--short" %>
-      <p class="hint"><%= t(".rounds_hint") %></p>
-    </div>
-  <% end %>
+  <div class="field">
+    <%= form.label :rounds_count %>
+    <%= form.number_field :rounds_count, min: [ 1, tournament.fixed_rounds_count ].max, max: Tournament::MAX_ROUNDS, step: 1,
+          class: "input--short", placeholder: t(".rounds_auto"), required: tournament.swiss?,
+          data: { pairing_form_target: "rounds" } %>
+    <% Tournament.pairing_systems.each_key do |system| %>
+      <p class="hint" data-pairing-form-target="hint" data-system="<%= system %>"><%= t(".rounds_hints.#{system}") %></p>
+    <% end %>
+  </div>
 
   <div class="form__actions">
     <%= form.submit class: "btn btn--primary" %>

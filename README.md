@@ -29,7 +29,9 @@ The whole CI pipeline runs locally with `bin/ci`.
 
 1. **Players**: add people to the roster. The name and nickname are required, and the nickname must be unique
    (case-insensitive). The FIDE rating is optional (1000–3000) and is used for seeding.
-2. **New tournament**: pick **Swiss** (set the number of rounds) or **Round robin**.
+2. **New tournament**: pick **Swiss** or **Round robin** and set the number of rounds (1–50). The count doesn't
+   depend on the number of players: with more rounds than opponents, players simply meet again. For a round robin
+   you can leave it blank for one full cycle.
 3. **Members**: tick players in the roster (or register a new one in place) and add them.
 4. **Start**: pairs round 1 (Swiss) or every round (round robin).
 5. **Pairings**: each round lists board (desk) numbers, White, Black, and each player's points before the round.
@@ -45,16 +47,19 @@ clean sheet for the wall.
 ## Pairing rules
 
 **Round robin**: FIDE Berger tables. Members are seeded by rating. With an odd count, one player rests
-each round (0 points).
+each round (0 points). More rounds than one cycle repeat the cycle with colors reversed (10 rounds for 6 players is
+a double round robin).
 
 **Swiss**: a simplified FIDE Dutch system:
 - players are ranked by score, then rating;
 - inside a score group the top half meets the bottom half; odd players float down;
-- no rematches, and nobody gets a second bye. The search backtracks to keep both rules and relaxes them only
-  when no legal pairing exists;
+- players meet as rarely as possible: everyone meets everyone once before anyone meets twice, the same pair
+  doesn't meet in consecutive rounds, and a pairing that would leave the next round stuck is avoided. The search
+  backtracks to keep these rules and relaxes them only when nothing else fits;
 - colors are balanced and alternated; pairings try to avoid three of the same color in a row or a color
   difference above 2;
-- with an odd count, the lowest-ranked player without a bye gets one (1 point).
+- with an odd count, the lowest-ranked player among those with the fewest byes gets one (1 point), so byes
+  rotate evenly.
 
 **Tie-breaks**: Swiss uses Buchholz, then Sonneborn-Berger, then wins. Round robin uses Sonneborn-Berger,
 then wins. Fully tied players share a rank.
@@ -62,8 +67,11 @@ then wins. Fully tied players share a rank.
 ## Corrections
 
 - Results can be changed any time before the tournament is finished, including earlier rounds.
-- Swiss: the latest round can be deleted and paired again. Late entries can be added while the
-  tournament runs and join the next round with 0 points.
+- Players can join while the tournament runs (**Добавить игрока / Add player**). In a Swiss they play from the
+  next round with 0 points. In a round robin the rounds that haven't started yet are paired again to include
+  them; raise the number of rounds if they should meet everyone.
+- Swiss: the latest round can be deleted and paired again. Round robin: changing the number of rounds re-pairs
+  the rounds that haven't started.
 - **Undo start** (in the ••• menu) removes all pairings while no result has been entered yet.
 - Players or members who already have games can't be deleted, so history stays consistent.
 
