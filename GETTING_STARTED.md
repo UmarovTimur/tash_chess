@@ -100,7 +100,7 @@ needs these variables:
 |---|---|
 | `RAILS_MASTER_KEY` | Contents of `config/master.key`, which is not in git: get it from whoever set up the app |
 | `BASIC_AUTH_USERNAME`, `BASIC_AUTH_PASSWORD` | The shared login. Optional: without them the app is open to everyone |
-| `PGHOST` (and `PGPORT` if not 5432) | The PostgreSQL server. `DB_HOST`, mentioned in `deploy.yml`, is not read |
+| `PGHOST` (and `PGPORT` if not 5432) | The PostgreSQL server. Kamal points it at its own `tash_chess-db` container |
 | `TASH_CHESS_DATABASE_PASSWORD` | Password of the `tash_chess` database role |
 | `SOLID_QUEUE_IN_PUMA=true` | Runs background jobs inside the web server. Live updates are sent by a job, so without it screens don't refresh |
 
@@ -120,17 +120,28 @@ docker run -d -p 80:80 --name tash_chess \
   tash_chess
 ```
 
-**With Kamal:** `config/deploy.yml` already passes the master key and the login and turns on
-`SOLID_QUEUE_IN_PUMA`. Before the first deploy:
+**With Kamal:** `config/deploy.yml` deploys to the VPS as the `deploy` user, runs PostgreSQL 16 next to the app
+(the `tash_chess-db` accessory), and sets everything in the table above. kamal-proxy serves the app over HTTPS
+with a Let's Encrypt certificate, and production forces HTTPS. The settings that differ per deploy live in
+`.env.deploy`, which is not in git:
 
-1. Replace the placeholder `servers` and `registry` in `config/deploy.yml`.
-2. Add the database settings: `PGHOST` under `env.clear`, and `TASH_CHESS_DATABASE_PASSWORD` under
-   `env.secret` and in `.kamal/secrets`.
-3. To turn on the login, export it: `export BASIC_AUTH_USERNAME=... BASIC_AUTH_PASSWORD=...`
-4. Run `bin/kamal setup` the first time, and `bin/kamal deploy` after that.
+```sh
+TASH_CHESS_HOST="guide64.org"
+TASH_CHESS_DATABASE_PASSWORD="..."
+# BASIC_AUTH_USERNAME=...   # uncomment both to turn on the login
+# BASIC_AUTH_PASSWORD=...
+```
 
-Serve it over HTTPS. Basic auth sends the password with every request. Turn on `proxy.ssl` in
-`config/deploy.yml`, and `config.assume_ssl` / `config.force_ssl` in `config/environments/production.rb`.
+Load it into the shell, then deploy:
+
+```sh
+set -a; . ./.env.deploy; set +a
+bin/kamal setup     # first time: starts the database, then deploys
+bin/kamal deploy    # after that
+```
+
+Kamal builds the image from the last commit, so commit your changes before deploying. Production doesn't load
+the sample data. Useful afterwards: `bin/kamal logs`, `bin/kamal console`, `bin/kamal dbc`.
 
 ## Troubleshooting
 

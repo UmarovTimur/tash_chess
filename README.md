@@ -37,10 +37,9 @@ BASIC_AUTH_USERNAME=arbiter BASIC_AUTH_PASSWORD=... bin/dev
 ```
 
 - Unless both are set, the app is open to everyone, in production too. Set them on any server reachable from
-  outside your club. With Kamal, export both before `bin/kamal deploy` (they're listed in `.kamal/secrets`).
+  outside your club. With Kamal, put them in `.env.deploy` (see [GETTING_STARTED.md](GETTING_STARTED.md)).
 - The health check at `/up` stays open for the load balancer.
-- Basic auth sends the password with every request, so serve production over HTTPS (`proxy.ssl` in
-  `config/deploy.yml` and `config.assume_ssl` / `config.force_ssl` in `config/environments/production.rb`).
+- Production forces HTTPS, so the password never travels in clear text.
 
 ## How a tournament runs
 

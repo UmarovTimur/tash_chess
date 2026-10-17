@@ -1,4 +1,7 @@
 # Sample club roster and one tournament in registration. Safe to run more than once.
+# Skipped in production, where the first deploy would otherwise fill the real roster with these players.
+return if Rails.env.production?
+
 players = [
   [ "Anna Kowalska", "anna_k", 2215 ],
   [ "Boris Lebedev", "boris", 2140 ],
