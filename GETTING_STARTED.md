@@ -132,10 +132,9 @@ TASH_CHESS_DATABASE_PASSWORD="..."
 # BASIC_AUTH_PASSWORD=...
 ```
 
-Load it into the shell, then deploy:
+`config/deploy.yml` loads it, so you can deploy right away (variables already set in the shell win):
 
 ```sh
-set -a; . ./.env.deploy; set +a
 bin/kamal setup     # first time: starts the database, then deploys
 bin/kamal deploy    # after that
 ```
