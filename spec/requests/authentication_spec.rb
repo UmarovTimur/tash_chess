@@ -51,22 +51,15 @@ RSpec.describe "Authentication" do
     end
   end
 
-  context "without a login set" do
-    before { stub_login(nil, "") }
+  it "stays open without a login set, in production too" do
+    allow(Rails.env).to receive(:production?).and_return(true)
 
-    it "stays open outside production" do
-      get root_path
-      expect(response).to have_http_status(:success)
-    end
+    stub_login(nil, nil)
+    get root_path
+    expect(response).to have_http_status(:success)
 
-    it "refuses everyone in production" do
-      allow(Rails.env).to receive(:production?).and_return(true)
-
-      get root_path
-      expect(response).to have_http_status(:unauthorized)
-
-      get root_path, headers: login("", "")
-      expect(response).to have_http_status(:unauthorized)
-    end
+    stub_login("arbiter", "")
+    get root_path
+    expect(response).to have_http_status(:success)
   end
 end

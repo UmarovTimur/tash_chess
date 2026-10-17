@@ -10,16 +10,12 @@ class ApplicationController < ActionController::Base
 
   private
     # One shared login for the whole app (HTTP Basic auth) from BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD.
-    # Without them development and tests stay open, while production turns everyone away.
+    # Unless both are set, the app is open to everyone.
     def authenticate
       name, password = ENV["BASIC_AUTH_USERNAME"].presence, ENV["BASIC_AUTH_PASSWORD"].presence
+      return unless name && password
 
-      if name && password
-        http_basic_authenticate_or_request_with name:, password:, realm: "Tash Chess", message: t("authentication.denied")
-      elsif Rails.env.production?
-        logger.error "BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD are not set, so every request is refused"
-        request_http_basic_authentication "Tash Chess", t("authentication.denied")
-      end
+      http_basic_authenticate_or_request_with name:, password:, realm: "Tash Chess", message: t("authentication.denied")
     end
 
     # When players join a running tournament, says from which round they play.

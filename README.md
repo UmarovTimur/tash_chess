@@ -23,6 +23,8 @@ bin/dev                                     # http://localhost:3000
 The app connects with libpq defaults, so `PGHOST`, `PGPORT`, `PGUSER` and `PGPASSWORD` work as
 usual (e.g. `PGPORT=5433` for the PostgreSQL 14 cluster).
 
+Step by step, with tests, production and troubleshooting: [GETTING_STARTED.md](GETTING_STARTED.md).
+
 Tests: `bin/rspec` (RSpec; first run `bin/rails db:test:prepare`). Lint: `bin/rubocop`, `bin/brakeman`.
 The whole CI pipeline runs locally with `bin/ci`.
 
@@ -34,9 +36,8 @@ The whole app sits behind one shared username and password (HTTP Basic auth), se
 BASIC_AUTH_USERNAME=arbiter BASIC_AUTH_PASSWORD=... bin/dev
 ```
 
-- **Development and test**: the app is open while they aren't set.
-- **Production**: they are required. Without them every page answers 401, so the app never goes public by
-  mistake. With Kamal, export both before `bin/kamal deploy` (they're listed in `.kamal/secrets`).
+- Unless both are set, the app is open to everyone, in production too. Set them on any server reachable from
+  outside your club. With Kamal, export both before `bin/kamal deploy` (they're listed in `.kamal/secrets`).
 - The health check at `/up` stays open for the load balancer.
 - Basic auth sends the password with every request, so serve production over HTTPS (`proxy.ssl` in
   `config/deploy.yml` and `config.assume_ssl` / `config.force_ssl` in `config/environments/production.rb`).
