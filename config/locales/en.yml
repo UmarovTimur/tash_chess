@@ -16,6 +16,9 @@ en:
       players: Players
       language: Language
 
+  authentication:
+    denied: A username and password are required.
+
   shared:
     actions: Actions
     edit: Edit

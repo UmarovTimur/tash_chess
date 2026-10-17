@@ -16,6 +16,9 @@ ru:
       players: Игроки
       language: Язык
 
+  authentication:
+    denied: Нужны логин и пароль.
+
   shared:
     actions: Действия
     edit: Изменить

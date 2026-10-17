@@ -6,8 +6,22 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   around_action :switch_locale
+  before_action :authenticate
 
   private
+    # One shared login for the whole app (HTTP Basic auth) from BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD.
+    # Without them development and tests stay open, while production turns everyone away.
+    def authenticate
+      name, password = ENV["BASIC_AUTH_USERNAME"].presence, ENV["BASIC_AUTH_PASSWORD"].presence
+
+      if name && password
+        http_basic_authenticate_or_request_with name:, password:, realm: "Tash Chess", message: t("authentication.denied")
+      elsif Rails.env.production?
+        logger.error "BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD are not set, so every request is refused"
+        request_http_basic_authentication "Tash Chess", t("authentication.denied")
+      end
+    end
+
     # When players join a running tournament, says from which round they play.
     def late_entry_note(tournament)
       return unless tournament.in_progress?

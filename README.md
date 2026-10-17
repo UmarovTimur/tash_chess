@@ -3,7 +3,8 @@
 A small app for running club chess tournaments: keep a roster of players, create a tournament,
 add its members, pair rounds with board numbers, enter results, and show live standings.
 
-Rails 8.1 · PostgreSQL · Hotwire (Turbo + Stimulus, importmap). No build step and no login.
+Rails 8.1 · PostgreSQL · Hotwire (Turbo + Stimulus, importmap). No build step and no user accounts, just one
+shared login.
 
 The interface is in **Russian by default**. The RU / EN switch in the top bar changes the language, and the
 choice is kept in a cookie.
@@ -24,6 +25,21 @@ usual (e.g. `PGPORT=5433` for the PostgreSQL 14 cluster).
 
 Tests: `bin/rspec` (RSpec; first run `bin/rails db:test:prepare`). Lint: `bin/rubocop`, `bin/brakeman`.
 The whole CI pipeline runs locally with `bin/ci`.
+
+## Login
+
+The whole app sits behind one shared username and password (HTTP Basic auth), set with environment variables:
+
+```sh
+BASIC_AUTH_USERNAME=arbiter BASIC_AUTH_PASSWORD=... bin/dev
+```
+
+- **Development and test**: the app is open while they aren't set.
+- **Production**: they are required. Without them every page answers 401, so the app never goes public by
+  mistake. With Kamal, export both before `bin/kamal deploy` (they're listed in `.kamal/secrets`).
+- The health check at `/up` stays open for the load balancer.
+- Basic auth sends the password with every request, so serve production over HTTPS (`proxy.ssl` in
+  `config/deploy.yml` and `config.assume_ssl` / `config.force_ssl` in `config/environments/production.rb`).
 
 ## How a tournament runs
 
