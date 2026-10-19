@@ -4,7 +4,7 @@
 
 <header class="tv-head">
   <div class="tv-head__title">
-    <span class="tv-brand" aria-hidden="true">♞</span>
+    <%= image_tag "logo.png", class: "tv-brand", alt: "" %>
     <div class="tv-head__text">
       <h1 class="tv-title"><%= @tournament.name %></h1>
       <p class="tv-subtitle"><%= [ @tournament.pairing_system_label, (l(@tournament.starts_on, format: :long) if @tournament.starts_on), @tournament.location ].compact.join(" · ") %></p>
@@ -53,10 +53,12 @@
 <nav class="tv-controls" aria-label="<%= t(".controls") %>">
   <div class="tv-segmented">
     <% Tournaments::ScreensController::VIEWS.each do |view| %>
-      <%= link_to t(".views.#{view}"), screen_path_with(view:), class: class_names("tv-segmented__item", "is-active": view == @view) %>
+      <%= link_to screen_path_with(view:), class: class_names("tv-segmented__item", "is-active": view == @view) do %>
+        <span class="tv-label--long"><%= t(".views.#{view}") %></span><span class="tv-label--short"><%= t(".views_short.#{view}") %></span>
+      <% end %>
     <% end %>
   </div>
-  <div class="tv-segmented" title="<%= t(".rotate_hint") %>">
+  <div class="tv-segmented tv-controls__rotate" title="<%= t(".rotate_hint") %>">
     <span class="tv-segmented__label"><%= icon(:rotate) %></span>
     <%= link_to t(".rotate_off"), screen_path_with(rotate: nil), class: class_names("tv-segmented__item", "is-active": @rotate.nil?) %>
     <% Tournaments::ScreensController::ROTATE_INTERVALS.each do |seconds| %>
@@ -65,7 +67,7 @@
   </div>
   <%= link_to icon(@theme == "dark" ? :sun : :moon), screen_path_with(theme: (@theme == "dark" ? "light" : nil)),
         class: "tv-button", title: t(".theme"), aria: { label: t(".theme") } %>
-  <button type="button" class="tv-button" data-action="screen#fullscreen" title="<%= t(".fullscreen") %>" aria-label="<%= t(".fullscreen") %>"><%= icon(:maximize) %></button>
+  <button type="button" class="tv-button tv-button--fullscreen" data-action="screen#fullscreen" title="<%= t(".fullscreen") %>" aria-label="<%= t(".fullscreen") %>"><%= icon(:maximize) %></button>
   <%= link_to icon(:x), @round && !@tournament.registration? ? tournament_round_path(@tournament, @round) : @tournament,
         class: "tv-button", title: t(".exit"), aria: { label: t(".exit") } %>
 </nav>

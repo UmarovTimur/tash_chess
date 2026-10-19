@@ -236,6 +236,9 @@ ru:
           pairings: Кто с кем играет
           standings: Таблица
           members: Участники
+        views_short:
+          pairings: Жеребьёвка
+          standings: Таблица
         round: Тур
         of: "из %{total}"
         progress: "Результатов: %{played} из %{total}"

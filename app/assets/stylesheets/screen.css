@@ -87,11 +87,7 @@ html, body { height: 100%; }
 }
 .tv-head__title { display: flex; align-items: center; gap: 1.4vw; min-width: 0; }
 .tv-head__text { min-width: 0; }
-.tv-brand {
-  display: flex; align-items: center; justify-content: center; flex: none;
-  width: 7.4vh; height: 7.4vh; border-radius: 1.6vh;
-  background: var(--tv-board-bg); color: var(--tv-board-text); font-size: 5vh; line-height: 1;
-}
+.tv-brand { display: block; flex: none; width: 7.4vh; height: 7.4vh; border-radius: 1.4vh; box-shadow: 0 0 0 1px var(--tv-border); }
 .tv-title { font-size: 4.4vh; font-weight: 750; letter-spacing: -0.03em; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tv-subtitle { margin-top: 0.4vh; font-size: 2.2vh; color: var(--tv-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
@@ -282,6 +278,7 @@ html, body { height: 100%; }
   color: var(--tv-muted); text-decoration: none; white-space: nowrap;
 }
 .tv-segmented__item:hover { color: var(--tv-text); }
+.tv-label--short { display: none; }
 .tv-segmented__item.is-active { background: var(--tv-card); color: var(--tv-text); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
 
 .tv-button {
@@ -290,3 +287,60 @@ html, body { height: 100%; }
   font: inherit; font-size: 16px; cursor: pointer; text-decoration: none;
 }
 .tv-button:hover { background: var(--tv-pill); }
+
+/* ---------- Phones and small tablets: a normal scrolling page in fixed sizes ---------- */
+@media (max-width: 820px), (max-height: 500px) {
+  .tv {
+    height: auto; min-height: 100vh; overflow: visible; cursor: auto;
+    padding: 16px 16px calc(80px + env(safe-area-inset-bottom));
+  }
+
+  .tv-head { flex-wrap: wrap; gap: 12px; padding-bottom: 14px; margin-bottom: 14px; }
+  .tv-head__title { flex: 1 1 100%; gap: 12px; }
+  .tv-brand { width: 48px; height: 48px; border-radius: 10px; }
+  .tv-title { font-size: 1.35rem; white-space: normal; }
+  .tv-subtitle { margin-top: 2px; font-size: 0.85rem; white-space: normal; }
+  .tv-head__status { flex: 1 1 100%; flex-wrap: wrap; justify-content: space-between; gap: 8px 12px; }
+  .tv-view { font-size: 0.68rem; letter-spacing: 0.05em; padding: 6px 10px; white-space: nowrap; }
+  .tv-round { gap: 5px; white-space: nowrap; }
+  .tv-round__label, .tv-round__total { font-size: 0.85rem; }
+  .tv-round__number { font-size: 2.2rem; }
+  .tv-clock { font-size: 1.25rem; }
+
+  .tv-pairings, .tv-members, .tv-standings { font-size: 17px; }
+  .tv-pairings, .tv-members {
+    grid-auto-flow: row; grid-template-rows: none; grid-template-columns: minmax(0, 1fr); gap: 8px;
+  }
+
+  .tv-standings { grid-template-columns: minmax(0, 1fr); gap: 0.25em; }
+  .tv-standings__column + .tv-standings__column .tv-standing--head { display: none; }
+  .tv-standing, .tv-standings--rounds .tv-standing { grid-template-columns: 2em minmax(0, 1fr) 2.4em 2.4em; gap: 0 0.5em; }
+  .tv-standings--rounds .tv-standing > .tv-name { margin-right: 0; }
+  .tv-standings--rounds .tv-cell { display: none; }
+
+  .tv-empty { font-size: 1rem; padding-top: 32px; }
+
+  .tv-foot { flex-wrap: wrap; gap: 10px 16px; margin-top: 16px; padding-top: 14px; font-size: 0.85rem; }
+  .tv-foot__start { flex: 1 1 100%; gap: 12px; }
+  .tv-progress { flex: 1; width: auto; height: 6px; }
+  .tv-live { gap: 6px; }
+  .tv-live__dot { width: 8px; height: 8px; }
+
+  /* Always shown at the bottom: there is no mouse to wake them, and nothing to rotate or blow up. */
+  .tv-controls, .tv--awake .tv-controls, .tv-controls:hover, .tv-controls:focus-within {
+    left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom));
+    transform: none; opacity: 1; pointer-events: auto;
+  }
+  .tv-controls .tv-segmented:first-child { flex: 1; min-width: 0; }
+  .tv-controls .tv-segmented:first-child .tv-segmented__item {
+    display: block; flex: 1; min-width: 0; padding: 0 8px; line-height: 32px; text-align: center;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .tv-controls__rotate, .tv-button--fullscreen { display: none; }
+  .tv-label--long { display: none; }
+  .tv-label--short { display: inline; }
+}
+
+@media (max-width: 380px) {
+  .tv-view { display: none; }
+}

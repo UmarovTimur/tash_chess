@@ -224,6 +224,9 @@ en:
           pairings: Pairings
           standings: Standings
           members: Players
+        views_short:
+          pairings: Pairings
+          standings: Standings
         round: Round
         of: "of %{total}"
         progress: "Results in: %{played} of %{total}"
